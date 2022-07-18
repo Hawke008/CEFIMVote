@@ -4,7 +4,7 @@
 }
 
 
-{$SERVER_NAME:localhost}
+{$SERVER_NAME:3000}
 
 
 
