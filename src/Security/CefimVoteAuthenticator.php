@@ -50,7 +50,7 @@ class CefimVoteAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        return new RedirectResponse($this->urlGenerator->generate('session_dashboard'));
+        return new RedirectResponse($this->urlGenerator->generate('app_liste_sessions'));
         // throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 

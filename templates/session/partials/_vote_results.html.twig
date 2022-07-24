@@ -1,27 +1,50 @@
 <div class="col-5 ">
 	<form>
-		<div class="row mb-4">
+		<div class="row mb-4 resultats-votes">
 			<div class="col">
 				<p class="votes-number">Nombre de votants : 13/13</p>
 				<ul>
-				<table>
 					{% for candidat in candidats %}
-					{%if candidat.titulaire%}
-					<li>Résultats des votes .............. : ...votes</li>
-						<span>Titulaire : {{candidat.titulaire}}<span></br>
-					{%else%}
-						<span>Suppléant : {{candidat.suppleant}}<span></br></br>
-						{% endif %}
-					{%endfor%}
-					</ul>
-
+						{%if candidat.titulaire%}
+							<li>Résultats des votes .............. : ...votes</li>
+							<span>Titulaire :
+								{{candidat.titulaire}}<span></br>
+								{%else%}
+								<span>Suppléant :
+									{{candidat.suppleant}}<span></br>
+								</br>
+							{% endif %}
+							{%endfor%}
+						</ul>
+					</div>
 				</div>
-			</div>
-			<div class="row mt-5 p-0 ">
-				<div class="col"><input type="button" class="close-vote" value="Clôturer le vote"></div>
-				<div class="col p-0"></div>
-
-			</div>
+				<div class="row mt-5 p-0 ">
+					<div class="col"><input type="button" class="close-vote" value="Clôturer le vote"></div>
+					<div class="col p-0"></div>
+				</div>
+			</form>
 		</div>
-	</form>
-	</div>
+
+		<script>
+			const resultatsVoteContainer = document.querySelector('.resultats-votes')
+const clotureVote = document.querySelector('.close-vote');
+const resultats = document.createElement('p');
+
+resultats.textContent = "BLAHHHH";
+if (resultats.className != "lancer-second-tour") {
+clotureVote ?. addEventListener('click', function (e) {
+e.stopPropagation()
+clotureVote.value = "Commencer le second Tour"
+resultatsVoteContainer.append(resultats)
+})
+}
+resultats.className = "lancer-second-tour"
+if (resultats.className == "lancer-second-tour") {
+clotureVote ?. addEventListener('click', function () {
+
+console.log("Gelko")
+})
+
+
+}
+		</script>

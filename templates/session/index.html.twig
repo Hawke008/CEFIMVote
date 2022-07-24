@@ -128,7 +128,7 @@ const listeCandidats = document.querySelector(".liste-candidats")
 const listeCandidatsGroup = document.querySelector(".liste-candidats-group")
 const addCandidats = document.querySelector('.add-candidats')
 
-addCandidats ?. addEventListener("click", function () {
+addCandidats?. addEventListener("click", function () {
 const ajoutListeCandidats = listeCandidats.cloneNode(true)
 listeCandidatsGroup.appendChild(ajoutListeCandidats)
 })
@@ -137,7 +137,7 @@ const sendCandidatesList = document.querySelector('.start-vote')
 const url = window.location.toString()
 console.log(url);
 sendCandidatesList ?. addEventListener('click', (event) => {
-event.preventDefault();
+
 const candidatesToBeElected = document.querySelectorAll(".candidats")
 let binome = {}
 
@@ -156,7 +156,8 @@ request.addEventListener('onreadystatechange', () => {
 if (request.readyState === XMLHttpRequest.DONE) {
 if (request.status === 200) {
 const response = JSON.parse(request.response);
-onSuccess(response);
+onSuccess(response
+);
 } else {
 onError(request);
 }
@@ -164,6 +165,7 @@ onError(request);
 });
 binome = JSON.stringify(binome);
 request.send("binome=" + encodeURIComponent(binome))
+
 })
 	</script>
 {% endblock %}

@@ -19,18 +19,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class SessionController extends AbstractController
 {
 
-    #[Route('/session/dashboard/{id}', name: 'session_dashboard', methods: ['GET','POST'])]
+    #[Route('/session/dashboard/{id}/{state}', name: 'session_dashboard', methods: ['GET','POST'])]
     public function showDashboard(
         EntityManagerInterface $entityManager, 
         ElecteursRepository $electeurs, 
         SessionsRepository $session, 
         $id, 
+        $state=0,
         CandidatsRepository $candidats,
         Request $request): Response
 
     {   $electeur = $electeurs->findAll();
         $sessionInfos = $session->find($id);
         $candidats=$candidats->findAll();
+
+
         // foreach($candidats as $candidat=>$electeurId){
         //     if($key%)
         //     dd($electeurId->getTitulaire());
@@ -38,33 +41,32 @@ class SessionController extends AbstractController
         //     var_dump($candidatTitulaire);
         // }
         
-        $state=1;
-
-        if ($request->isMethod('post')) {
-            $state+=1;
-            $binome=$request->request->get('binome');
-            $binome=json_decode($binome);
-            
-            foreach($binome as $key=>$value){
-                $candidats=new Candidats();
-               if(intval($key)%2==0){
-                    $candidats->setTitulaire($electeurs->find($value));
-                    $candidats->setSession($session->find($id));
-                    $entityManager->persist($candidats);
-                    $entityManager->flush();
+        $state=$state;
+      
+            if ($request->isMethod('post')) {
+          
+                $binome=$request->request->get('binome');
+                $binome=json_decode($binome);
+                
+                foreach($binome as $key=>$value){
+                    $candidats=new Candidats();
+                   if(intval($key)%2==0){
+                        $candidats->setTitulaire($electeurs->find($value));
+                        $candidats->setSession($session->find($id));
+                        $entityManager->persist($candidats);
+                        $entityManager->flush();
+                    }
+                    if(intval($key)%2!=0){
+                        
+                        $candidats->setSuppleant($electeurs->find($value));
+                        $candidats->setSession($session->find($id));
+                        $entityManager->persist($candidats);
+                        $entityManager->flush();
+                    }
                 }
-                if(intval($key)%2!=0){
-                    
-                    $candidats->setSuppleant($electeurs->find($value));
-                    $candidats->setSession($session->find($id));
-                    $entityManager->persist($candidats);
-                    $entityManager->flush();
-                }
-            }
-            
+                
 
-        } 
-
+            } 
         return $this->render('session/index.html.twig', ['electeurs' => $electeur, 'session' => $sessionInfos, 'state'=>$state,'candidats'=>$candidats]);
     }
 

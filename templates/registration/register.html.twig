@@ -28,11 +28,12 @@
     <h2 class="my-3 ms-0 highlight-text">Register</h2>
 
    {{ form_start(registrationForm) }}
-      {{ form_row(registrationForm.nom, {
-            label: 'Nom'
-        }) }}
+      
         {{ form_row(registrationForm.prenom, {
             label: 'Prenom', 
+        }) }}
+        {{ form_row(registrationForm.nom, {
+            label: 'Nom'
         }) }}
         {{ form_row(registrationForm.email) }}
         {{ form_row(registrationForm.plainPassword, {

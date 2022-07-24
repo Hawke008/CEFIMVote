@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des sessions existantes{% endblock %}
+
+{% block body %}
+
+<style>
+.register {
+   background-color: var(--dark-grey);
+   color:white;
+   font-weight:700;
+   width:200px;
+   border:1px solid var(--dark-grey);
+}
+
+.highlight-text{
+	font-weight:700
+}
+
+.form{
+    margin-top:3%;
+}
+</style>
+    <div class="d-flex justify-content-center">
+<div class="w-50 form">
+    <h2 class="my-1 ms-0 highlight-text">Tableau de bord des sessions existantes</h2>
+
+ {% set someValue=1 %}
+     {# {{ form_row(createSessionForm.heure_debut, {label:'Date de début de la session'}) }}
+     {{ form_row(createSessionForm.heure_fin, {label:'Date de fin de la session'}) }}
+     {{ form_row(createSessionForm.pdf, {label:'PDF'}) }} #}
+
+        <button type="submit" class="register">Création de la Session</button>
+    </div>
+       </div>
+{% endblock %}
