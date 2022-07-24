@@ -15,37 +15,38 @@ class Sessions
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private $heure_debut;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private $heure_fin;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $promotion;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetime')]
     private $date_debut_promo;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetime')]
     private $date_fin_promo;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $ville;
 
-    #[ORM\Column(type: 'blob', nullable: true)]
-    private $pdf;
-
-    #[ORM\ManyToOne(targetEntity: responsables::class, inversedBy: 'sessions')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Responsables::class, inversedBy: 'sessions')]
+    #[ORM\JoinColumn(nullable: true)]
     private $responsable;
 
     #[ORM\OneToMany(mappedBy: 'session', targetEntity: Electeurs::class, orphanRemoval: true)]
     private $electeurs;
 
+    #[ORM\OneToMany(mappedBy: 'session', targetEntity: Candidats::class)]
+    private $candidats;
+
     public function __construct()
     {
         $this->electeurs = new ArrayCollection();
+        $this->candidats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -53,24 +54,24 @@ class Sessions
         return $this->id;
     }
 
-    public function getHeureDebut(): ?\DateTimeImmutable
+    public function getHeureDebut(): ?\DateTime
     {
         return $this->heure_debut;
     }
 
-    public function setHeureDebut(\DateTimeImmutable $heure_debut): self
+    public function setHeureDebut(\DateTime $heure_debut): self
     {
         $this->heure_debut = $heure_debut;
 
         return $this;
     }
 
-    public function getHeureFin(): ?\DateTimeImmutable
+    public function getHeureFin(): ?\DateTime
     {
         return $this->heure_fin;
     }
 
-    public function setHeureFin(?\DateTimeImmutable $heure_fin): self
+    public function setHeureFin(?\DateTime $heure_fin): self
     {
         $this->heure_fin = $heure_fin;
 
@@ -89,24 +90,24 @@ class Sessions
         return $this;
     }
 
-    public function getDateDebutPromo(): ?\DateTimeImmutable
+    public function getDateDebutPromo(): ?\DateTime
     {
         return $this->date_debut_promo;
     }
 
-    public function setDateDebutPromo(\DateTimeImmutable $date_debut_promo): self
+    public function setDateDebutPromo(\DateTime $date_debut_promo): self
     {
         $this->date_debut_promo = $date_debut_promo;
 
         return $this;
     }
 
-    public function getDateFinPromo(): ?\DateTimeImmutable
+    public function getDateFinPromo(): ?\DateTime
     {
         return $this->date_fin_promo;
     }
 
-    public function setDateFinPromo(\DateTimeImmutable $date_fin_promo): self
+    public function setDateFinPromo(\DateTime $date_fin_promo): self
     {
         $this->date_fin_promo = $date_fin_promo;
 
@@ -121,18 +122,6 @@ class Sessions
     public function setVille(string $ville): self
     {
         $this->ville = $ville;
-
-        return $this;
-    }
-
-    public function getPdf()
-    {
-        return $this->pdf;
-    }
-
-    public function setPdf($pdf): self
-    {
-        $this->pdf = $pdf;
 
         return $this;
     }
@@ -173,6 +162,36 @@ class Sessions
             // set the owning side to null (unless already changed)
             if ($electeur->getSession() === $this) {
                 $electeur->setSession(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Candidats>
+     */
+    public function getCandidats(): Collection
+    {
+        return $this->candidats;
+    }
+
+    public function addCandidat(Candidats $candidat): self
+    {
+        if (!$this->candidats->contains($candidat)) {
+            $this->candidats[] = $candidat;
+            $candidat->setSession($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidat(Candidats $candidat): self
+    {
+        if ($this->candidats->removeElement($candidat)) {
+            // set the owning side to null (unless already changed)
+            if ($candidat->getSession() === $this) {
+                $candidat->setSession(null);
             }
         }
 

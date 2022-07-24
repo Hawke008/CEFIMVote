@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Idenification Electeur
+{% endblock %}
+
+{% block body %}
+
+	<style>
+
+		.register {
+			background-color: var(--dark-grey);
+			color: white;
+			font-weight: 700;
+			width: 250px;
+			border: 1px solid var(--dark-grey);
+		}
+
+		.highlight-text {
+			font-weight: 700
+		}
+
+		.form {
+			margin-top: 3%;
+		}
+	</style>
+	<div class="d-flex justify-content-center">
+		<div class="w-50 form">
+			<h2 class="my-3 ms-0 highlight-text">Register</h2>
+
+			{{form_start(electeurIdForm)}}
+			{{form_row(electeurIdForm.nom, {
+            label: 'Nom'
+        }) }}
+			{{form_row(electeurIdForm.prenom, {
+            label: 'Prenom'
+        }) }}
+			{{form_row(electeurIdForm.signature,  {
+            label: 'Signature'
+        }) }}
+
+			<button type="submit" class="register">Entrez dans la session</button>
+			{{ form_end(electeurIdForm) }}
+		</div>
+	</div>
+{% endblock %}

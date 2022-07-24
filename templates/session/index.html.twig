@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello Session Controller
+{% endblock %}
+
+
+{% block body %}
+	<style>
+		ul {
+			padding: 0;
+			margin-bottom: 25px;
+		}
+		li {
+			list-style: roman;
+			list-style-position: inside
+		}
+		select {
+			display: block;
+			width: 100%;
+			background-color: white;
+			border: 1px solid var(--dark-grey)
+		}
+		input {
+			width: 100%
+		}
+		.votes-number {
+			background-color: var(--light-grey)
+		}
+
+		.close-vote,
+		.add-candidats,
+		.start-vote,
+		.select-candidates,
+		.register .login {
+			background-color: var(--dark-grey);
+			color: white;
+			font-weight: 700;
+			min-width: 150px;
+			border: 1px solid var(--dark-grey);
+		}
+
+		.highlight-text {
+			font-weight: 700
+		}
+	</style>
+	<div class="row ">
+		<div class="col-5 highlight-text">
+
+			<div class="row">
+				<div class="col">
+					Promotion
+				</div>
+				<div class="col">
+					{{session.promotion}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					Code de connexion
+				</div>
+				<div class="col">
+					XACZER
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					Date de scrutin
+				</div>
+				<div class="col">
+					{{session.heuredebut|format_datetime('full', 'none', locale='fr')}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					Heure de début
+				</div>
+				<div class="col">
+					{{session.heuredebut|format_datetime(pattern="hh'h'mm", locale='fr')}}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					Heure de fin
+				</div>
+				<div class="col"></div>
+			</div>
+			<div class="row">
+				<div class="col">
+					Liste des votants
+				</div>
+				<div class="col">
+					<ul>
+						{% for electeur in electeurs%}
+							<li>{{electeur.prenom}}
+								{{electeur.nom}}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+			{%if state==0%}
+				<div class="row">
+					<div class="col"></div>
+					<div class="col">
+						<input type="button" id="select-candidates" class="select-candidates" value="Sélectionner les candidats">
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		{%if state==0%}
+			<div class="col-2 text-center highlight-text">
+				Candidats
+			</div>
+			{{include('session/partials/_select_candidates.html.twig')}}
+		{% endif %}
+		{%if state==1%}
+			<div class="col-2 text-center highlight-text">
+				Résultats Tour n°1
+			</div>
+			{{include('session/partials/_vote_results.html.twig')}}
+		</div>
+	{% endif %}
+
+	<script>
+
+//selection des candidats
+const listeCandidats = document.querySelector(".liste-candidats")
+
+const listeCandidatsGroup = document.querySelector(".liste-candidats-group")
+const addCandidats = document.querySelector('.add-candidats')
+
+addCandidats ?. addEventListener("click", function () {
+const ajoutListeCandidats = listeCandidats.cloneNode(true)
+listeCandidatsGroup.appendChild(ajoutListeCandidats)
+})
+
+const sendCandidatesList = document.querySelector('.start-vote')
+const url = window.location.toString()
+console.log(url);
+sendCandidatesList ?. addEventListener('click', (event) => {
+event.preventDefault();
+const candidatesToBeElected = document.querySelectorAll(".candidats")
+let binome = {}
+
+for (let i = 0; i < candidatesToBeElected.length; i++) {
+if (i % 2 == 0) {
+binome[i] = candidatesToBeElected[i].value
+} else {
+binome[i] = candidatesToBeElected[i].value
+}
+}
+//Requête pour sélectionner les candidats et les sauvegarder en base
+const request = new XMLHttpRequest();
+request.open('POST', url, true)
+request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+request.addEventListener('onreadystatechange', () => {
+if (request.readyState === XMLHttpRequest.DONE) {
+if (request.status === 200) {
+const response = JSON.parse(request.response);
+onSuccess(response);
+} else {
+onError(request);
+}
+}
+});
+binome = JSON.stringify(binome);
+request.send("binome=" + encodeURIComponent(binome))
+})
+	</script>
+{% endblock %}

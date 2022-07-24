@@ -24,12 +24,19 @@ class Electeurs
     #[ORM\Column(type: 'blob')]
     private $signature;
 
-    #[ORM\ManyToOne(targetEntity: sessions::class, inversedBy: 'electeurs')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Sessions::class, inversedBy: 'electeurs')]
+    #[ORM\JoinColumn(nullable: true)]
     private $session;
+
+    #[ORM\OneToOne(mappedBy: 'titulaire', targetEntity: Candidats::class, cascade: ['persist', 'remove'])]
+    private $candidatsTitulaire;
+
+    #[ORM\OneToOne(mappedBy: 'suppleant', targetEntity: Candidats::class, cascade: ['persist', 'remove'])]
+    private $candidatsSuppleant;
 
     #[ORM\OneToMany(mappedBy: 'electeur', targetEntity: Votes::class)]
     private $votes;
+
 
     public function __construct()
     {
@@ -89,6 +96,50 @@ class Electeurs
         return $this;
     }
 
+    public function getCandidatsTitulaire(): ?Candidats
+    {
+        return $this->candidatsTitulaire;
+    }
+
+    public function setCandidatsTitulaire(?Candidats $candidatsTitulaire): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($candidatsTitulaire === null && $this->candidatsTitulaire !== null) {
+            $this->candidatsTitulaire->setTitulaire(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($candidatsTitulaire !== null && $candidatsTitulaire->getTitulaire() !== $this) {
+            $candidatsTitulaire->setTitulaire($this);
+        }
+
+        $this->candidatsTitulaire = $candidatsTitulaire;
+
+        return $this;
+    }
+
+    public function getCandidatsSuppleant(): ?Candidats
+    {
+        return $this->candidatsSuppleant;
+    }
+
+    public function setCandidatsSuppleant(?Candidats $candidatsSuppleant): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($candidatsSuppleant === null && $this->candidatsSuppleant !== null) {
+            $this->candidatsSuppleant->setSuppleant(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($candidatsSuppleant !== null && $candidatsSuppleant->getSuppleant() !== $this) {
+            $candidatsSuppleant->setSuppleant($this);
+        }
+
+        $this->candidatsSuppleant = $candidatsSuppleant;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Votes>
      */
@@ -117,5 +168,9 @@ class Electeurs
         }
 
         return $this;
+    }
+    public function __toString()
+    {
+        return $this->prenom." ".$this->nom;
     }
 }

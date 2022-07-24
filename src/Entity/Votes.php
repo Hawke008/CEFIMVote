@@ -16,14 +16,11 @@ class Votes
     #[ORM\Column(type: 'smallint', nullable: true)]
     private $tour;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private $vote_blanc;
-
-    #[ORM\ManyToOne(targetEntity: electeurs::class, inversedBy: 'votes')]
+    #[ORM\ManyToOne(targetEntity: Electeurs::class, inversedBy: 'votes')]
     private $electeur;
 
-    #[ORM\ManyToOne(targetEntity: binomes::class, inversedBy: 'votes')]
-    private $binome;
+    #[ORM\ManyToOne(targetEntity: candidats::class, inversedBy: 'votes')]
+    private $candidat;
 
     public function getId(): ?int
     {
@@ -42,38 +39,26 @@ class Votes
         return $this;
     }
 
-    public function isVoteBlanc(): ?bool
-    {
-        return $this->vote_blanc;
-    }
-
-    public function setVoteBlanc(?bool $vote_blanc): self
-    {
-        $this->vote_blanc = $vote_blanc;
-
-        return $this;
-    }
-
-    public function getElecteur(): ?electeurs
+    public function getElecteur(): ?Electeurs
     {
         return $this->electeur;
     }
 
-    public function setElecteur(?electeurs $electeur): self
+    public function setElecteur(?Electeurs $electeur): self
     {
         $this->electeur = $electeur;
 
         return $this;
     }
 
-    public function getBinome(): ?binomes
+    public function getCandidat(): ?candidats
     {
-        return $this->binome;
+        return $this->candidat;
     }
 
-    public function setBinome(?binomes $binome): self
+    public function setCandidat(?candidats $candidat): self
     {
-        $this->binome = $binome;
+        $this->candidat = $candidat;
 
         return $this;
     }

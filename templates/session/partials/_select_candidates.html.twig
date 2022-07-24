@@ -1,0 +1,37 @@
+<div class="col-5 p-0">
+	<form class="form-candidats">
+		<div class="liste-candidats-group">
+			<div class="row mb-4 liste-candidats">
+				<div class="col">
+					<label for="titulaire">Titulaire</label>
+					<select type="select" class="candidats">
+						{% for electeur in electeurs%}
+							<option value="{{electeur.id}}">{{electeur.prenom}}
+								{{electeur.nom}}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="col">
+					<label for="suppleant">Suppléant</label>
+					<select type="select" class="candidats">
+						{% for electeur in electeurs%}
+							<option value="{{electeur.id}}">{{electeur.prenom}}
+								{{electeur.nom}}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-2">
+			<div class="col"></div>
+			<div class="col">
+				<input type="button" class="add-candidats" value="Ajouter des candidats">
+			</div>
+		</div>
+		<div class="row m-0 mt-5 p-0">
+			<div class="col-3"></div>
+			<div class="col-9 p-0">
+				<input type="button" class="start-vote" value="Commencer le premier tour">
+			</div>
+		</form>
+	</div>
