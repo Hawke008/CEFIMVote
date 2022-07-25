@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+
+<style>
+
+
+.register {
+   background-color: var(--dark-grey);
+   color:white;
+   font-weight:700;
+   width:150px;
+   border:1px solid var(--dark-grey);
+}
+
+.highlight-text{
+	font-weight:700
+}
+
+.form{
+    margin-top:3%;
+}
+	</style>
+    <div class="d-flex justify-content-center">
+<div class="w-50 form">
+    <h2 class="my-3 ms-0 highlight-text">Register</h2>
+
+   {{ form_start(registrationForm) }}
+      
+        {{ form_row(registrationForm.prenom, {
+            label: 'Prenom', 
+        }) }}
+        {{ form_row(registrationForm.nom, {
+            label: 'Nom'
+        }) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword, {
+            label: 'Password'
+        }) }}
+      
+        {{ form_row(registrationForm.agreeTerms) }}
+
+        <button type="submit" class="register">Register</button>
+    {{ form_end(registrationForm) }}
+    </div>
+       </div>
+{% endblock %}

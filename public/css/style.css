@@ -1,0 +1,28 @@
+:root{
+    --dark-grey: #666666;
+    --light-grey: #F1F2F2;
+    --logo-bg-color: #FD7E37;
+    
+}
+
+body{
+    padding-left:30px;
+    padding-right:30px;
+    background-color: var(--light-grey);
+}
+
+*{
+    font-family: Arial, Helvetica, sans-serif;
+    /* border: 1px solid red; */
+    color: var(--dark-grey);	
+}
+
+h1{
+    font-weight:700;
+}
+
+
+
+
+
+

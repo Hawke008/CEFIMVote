@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TestController!{% endblock %}
+
+{% block body %}
+<form>
+    <label for="message" >Votre message :</label>
+   <input name="message" id="message" type="text">
+    <button id='submit-button' type="submit" value=true name=test>Test</button>
+</form>
+    <div class="twitterEnMieux">
+    </div>
+<script>
+
+    const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
+    const twitter = document.querySelector('.twitterEnMieux')
+    const submitButton = document.querySelector('#submit-button');
+    const inputMessage = document.querySelector('#message')
+    eventSource.onmessage = event => {
+        const message = document.createElement('p')
+        message.innerText = JSON.parse(event.data);
+        twitter.appendChild(message);
+    }
+
+    submitButton.addEventListener('click', (event)=>{
+        event.preventDefault();
+        const request = new XMLHttpRequest();
+        request.open('POST' , 'http://localhost:8000/publish/test')
+        request.setRequestHeader('Content-type' ,'application/x-www-form-urlencoded')
+        request.setRequestHeader('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOltdfX0.Oo0yg7y4yMa1vr_bziltxuTCqb8JVHKxp-f_FwwOim0')
+        request.addEventListener('onreadystatechange',()=>{
+            if (request.readyState === 4 && request.status === 200){
+                console.log("envoyé")
+            }
+        })
+        request.send("topic=test&data="+inputMessage.value)
+    })
+
+
+</script>
+{% endblock %}
