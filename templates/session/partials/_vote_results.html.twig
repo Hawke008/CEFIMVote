@@ -5,12 +5,14 @@
 				<p class="votes-number">Nombre de votants : 13/13</p>
 				<ul>
 					{% for candidat in candidats %}
+					{% set resultats=random(1,3)%}
+					
 						{%if candidat.titulaire%}
-							<li>Résultats des votes .............. : ...votes</li>
-							<span>Titulaire :
+							<li data-votes="{{resultats}}">Résultats des votes .............. : {{resultats}} votes</li>
+							<span id="{{candidat.titulaire.id}}">Titulaire :
 								{{candidat.titulaire}}<span></br>
 								{%else%}
-								<span>Suppléant :
+								<span id="{{candidat.suppleant.id}}">Suppléant :
 									{{candidat.suppleant}}<span></br>
 								</br>
 							{% endif %}
@@ -19,32 +21,13 @@
 					</div>
 				</div>
 				<div class="row mt-5 p-0 ">
-					<div class="col"><input type="button" class="close-vote" value="Clôturer le vote"></div>
+					<div class="col next-step-button-container"><input type="button" class="close-vote" value="Clôturer le vote"></div>
 					<div class="col p-0"></div>
 				</div>
 			</form>
 		</div>
 
 		<script>
-			const resultatsVoteContainer = document.querySelector('.resultats-votes')
-const clotureVote = document.querySelector('.close-vote');
-const resultats = document.createElement('p');
-
-resultats.textContent = "BLAHHHH";
-if (resultats.className != "lancer-second-tour") {
-clotureVote ?. addEventListener('click', function (e) {
-e.stopPropagation()
-clotureVote.value = "Commencer le second Tour"
-resultatsVoteContainer.append(resultats)
-})
-}
-resultats.className = "lancer-second-tour"
-if (resultats.className == "lancer-second-tour") {
-clotureVote ?. addEventListener('click', function () {
-
-console.log("Gelko")
-})
 
 
-}
 		</script>

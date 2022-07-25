@@ -141,9 +141,12 @@ sendCandidatesList ?. addEventListener('click', (event) => {
 const candidatesToBeElected = document.querySelectorAll(".candidats")
 let binome = {}
 
+//récupération des titulaires et des suppléants
 for (let i = 0; i < candidatesToBeElected.length; i++) {
+//titulaire
 if (i % 2 == 0) {
 binome[i] = candidatesToBeElected[i].value
+//suppleant
 } else {
 binome[i] = candidatesToBeElected[i].value
 }
@@ -156,8 +159,7 @@ request.addEventListener('onreadystatechange', () => {
 if (request.readyState === XMLHttpRequest.DONE) {
 if (request.status === 200) {
 const response = JSON.parse(request.response);
-onSuccess(response
-);
+onSuccess(response);
 } else {
 onError(request);
 }

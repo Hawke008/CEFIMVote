@@ -44,7 +44,7 @@ class SessionController extends AbstractController
         $state=$state;
       
             if ($request->isMethod('post')) {
-          
+        
                 $binome=$request->request->get('binome');
                 $binome=json_decode($binome);
                 
