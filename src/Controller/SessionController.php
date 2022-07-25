@@ -11,27 +11,35 @@ use App\Repository\ElecteursRepository;
 use App\Repository\SessionsRepository;
 use App\Repository\VotesRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
+
+
 {
 
-    #[Route('/session/dashboard/{id}/{state}', name: 'session_dashboard', methods: ['GET','POST'])]
+    #[Route('/session/dashboard/{id}', name: 'session_dashboard', methods: ['GET','POST'])]
     public function showDashboard(
         EntityManagerInterface $entityManager, 
         ElecteursRepository $electeurs, 
         SessionsRepository $session, 
-        $id, 
-        $state=0,
+        $id,
+
         CandidatsRepository $candidats,
         Request $request): Response
 
-    {   $electeur = $electeurs->findAll();
+    {
+
+        $electeur = $electeurs->findAll();
         $sessionInfos = $session->find($id);
         $candidats=$candidats->findAll();
+        $state= $sessionInfos->getState();
+
+
 
 
         // foreach($candidats as $candidat=>$electeurId){
@@ -40,34 +48,53 @@ class SessionController extends AbstractController
         //     $candidatTitulaire=$electeurs->find($electeurId);
         //     var_dump($candidatTitulaire);
         // }
-        
-        $state=$state;
+
       
             if ($request->isMethod('post')) {
-        
+          
                 $binome=$request->request->get('binome');
                 $binome=json_decode($binome);
-                
+
+
                 foreach($binome as $key=>$value){
                     $candidats=new Candidats();
-                   if(intval($key)%2==0){
+                    if(intval($key)%2==0){
                         $candidats->setTitulaire($electeurs->find($value));
+                        $candidats->setSuppleant($electeurs->find($binome[$key+1]));
                         $candidats->setSession($session->find($id));
                         $entityManager->persist($candidats);
                         $entityManager->flush();
                     }
-                    if(intval($key)%2!=0){
-                        
-                        $candidats->setSuppleant($electeurs->find($value));
-                        $candidats->setSession($session->find($id));
-                        $entityManager->persist($candidats);
-                        $entityManager->flush();
-                    }
+                    $this->updateState($entityManager,$sessionInfos->getId(),1);
                 }
-                
 
-            } 
-        return $this->render('session/index.html.twig', ['electeurs' => $electeur, 'session' => $sessionInfos, 'state'=>$state,'candidats'=>$candidats]);
+
+
+            }
+        return $this->render('session/index.html.twig', ['electeurs' => $electeur, 'session' => $sessionInfos, 'state'=>$state,'candidats'=>$candidats,]);
+    }
+
+    public function updateState(EntityManagerInterface $entityManager,int $id, int $state): Response
+    {
+
+        $session = $entityManager->getRepository(Sessions::class)->find($id);;
+        $session->setState($state);
+        $entityManager->persist($session);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('session_dashboard', [
+            'id' => $session->getId()
+        ]);
+    }
+
+    public function generateRandomString($length = 8) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 
     #[Route('/session/new', name: 'session_creation')]
@@ -88,6 +115,8 @@ class SessionController extends AbstractController
             $session->setDateFinPromo($formdata->getDateFinPromo());
             $session->setVille($formdata->getVille());
             $session->setResponsable($formdata->getResponsable());
+            $session->setState(0);
+            $session->setCodeSession($this->generateRandomString());
             $entityManager->persist($session);
             $entityManager->flush();
             $sessionId = ($session->getId());

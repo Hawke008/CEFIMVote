@@ -43,6 +43,12 @@ class Sessions
     #[ORM\OneToMany(mappedBy: 'session', targetEntity: Candidats::class)]
     private $candidats;
 
+    #[ORM\Column(type: 'smallint')]
+    private $state;
+
+    #[ORM\Column(type: 'string', length: 8)]
+    private $codeSession;
+
     public function __construct()
     {
         $this->electeurs = new ArrayCollection();
@@ -194,6 +200,30 @@ class Sessions
                 $candidat->setSession(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getState(): ?int
+    {
+        return $this->state;
+    }
+
+    public function setState(int $state): self
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
+    public function getCodeSession(): ?string
+    {
+        return $this->codeSession;
+    }
+
+    public function setCodeSession(string $codeSession): self
+    {
+        $this->codeSession = $codeSession;
 
         return $this;
     }

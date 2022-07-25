@@ -5,14 +5,12 @@
 				<p class="votes-number">Nombre de votants : 13/13</p>
 				<ul>
 					{% for candidat in candidats %}
-					{% set resultats=random(1,3)%}
-					
 						{%if candidat.titulaire%}
-							<li data-votes="{{resultats}}">Résultats des votes .............. : {{resultats}} votes</li>
-							<span id="{{candidat.titulaire.id}}">Titulaire :
+							<li>Résultats des votes .............. : ...votes</li>
+							<span>Titulaire :
 								{{candidat.titulaire}}<span></br>
 								{%else%}
-								<span id="{{candidat.suppleant.id}}">Suppléant :
+								<span>Suppléant :
 									{{candidat.suppleant}}<span></br>
 								</br>
 							{% endif %}
@@ -28,6 +26,25 @@
 		</div>
 
 		<script>
+			const resultatsVoteContainer = document.querySelector('.resultats-votes')
+const clotureVote = document.querySelector('.close-vote');
+const resultats = document.createElement('p');
+
+resultats.textContent = "BLAHHHH";
+if (resultats.className != "lancer-second-tour") {
+clotureVote ?. addEventListener('click', function (e) {
+e.stopPropagation()
+clotureVote.value = "Commencer le second Tour"
+resultatsVoteContainer.append(resultats)
+})
+}
+resultats.className = "lancer-second-tour"
+if (resultats.className == "lancer-second-tour") {
+clotureVote ?. addEventListener('click', function () {
+
+console.log("Gelko")
+})
 
 
+}
 		</script>

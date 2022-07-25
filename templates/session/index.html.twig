@@ -59,7 +59,11 @@
 					Code de connexion
 				</div>
 				<div class="col">
+<<<<<<< HEAD
 					XACZER
+=======
+					{{ session.codeSession }}
+>>>>>>> 7b8ff860b73c1b9486afa96314f56efd5b331f7e
 				</div>
 			</div>
 			<div class="row">
@@ -122,52 +126,49 @@
 
 	<script>
 
-//selection des candidats
-const listeCandidats = document.querySelector(".liste-candidats")
+	//selection des candidats
+	const listeCandidats = document.querySelector(".liste-candidats")
 
-const listeCandidatsGroup = document.querySelector(".liste-candidats-group")
-const addCandidats = document.querySelector('.add-candidats')
+	const listeCandidatsGroup = document.querySelector(".liste-candidats-group")
+	const addCandidats = document.querySelector('.add-candidats')
 
-addCandidats?. addEventListener("click", function () {
-const ajoutListeCandidats = listeCandidats.cloneNode(true)
-listeCandidatsGroup.appendChild(ajoutListeCandidats)
-})
+	addCandidats?. addEventListener("click", function () {
+		const ajoutListeCandidats = listeCandidats.cloneNode(true)
+		listeCandidatsGroup.appendChild(ajoutListeCandidats)
+	})
 
-const sendCandidatesList = document.querySelector('.start-vote')
-const url = window.location.toString()
-console.log(url);
-sendCandidatesList ?. addEventListener('click', (event) => {
+	const sendCandidatesList = document.querySelector('.start-vote')
+	const url = window.location.toString()
+	console.log(url);
+	sendCandidatesList ?. addEventListener('click', (event) => {
 
-const candidatesToBeElected = document.querySelectorAll(".candidats")
-let binome = {}
+	const candidatesToBeElected = document.querySelectorAll(".candidats")
+	let binome = [];
 
-//récupération des titulaires et des suppléants
-for (let i = 0; i < candidatesToBeElected.length; i++) {
-//titulaire
-if (i % 2 == 0) {
-binome[i] = candidatesToBeElected[i].value
-//suppleant
-} else {
-binome[i] = candidatesToBeElected[i].value
-}
-}
-//Requête pour sélectionner les candidats et les sauvegarder en base
-const request = new XMLHttpRequest();
-request.open('POST', url, true)
-request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-request.addEventListener('onreadystatechange', () => {
-if (request.readyState === XMLHttpRequest.DONE) {
-if (request.status === 200) {
-const response = JSON.parse(request.response);
-onSuccess(response);
-} else {
-onError(request);
-}
-}
-});
-binome = JSON.stringify(binome);
-request.send("binome=" + encodeURIComponent(binome))
+	for (let i = 0; i < candidatesToBeElected.length; i++) {
+		if (i % 2 === 0) {
+			binome[i] = candidatesToBeElected[i].value
+		} else {
+			binome[i] = candidatesToBeElected[i].value
+		}
+	}
+	//Requête pour sélectionner les candidats et les sauvegarder en base
+	const request = new XMLHttpRequest();
+	request.open('POST', url, true)
+	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+	request.addEventListener('onreadystatechange', () => {
+		if (request.readyState === XMLHttpRequest.DONE) {
+			if (request.status === 200) {
+				const response = JSON.parse(request.response);
+				console.log("ca marche");
+			} else {
+				console.error('ca marche pas !');
+			}
+		}
+	});
+	binome = JSON.stringify(binome);
+	request.send("binome=" + encodeURIComponent(binome))
 
-})
+	})
 	</script>
 {% endblock %}
