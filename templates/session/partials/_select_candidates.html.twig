@@ -31,13 +31,56 @@
 		<div class="row m-0 mt-5 p-0">
 			<div class="col-3"></div>
 			<div class="col-9 p-0">
-<<<<<<< HEAD
-				<a href={{path('session_dashboard',{'id':'8','state':'1'} )}}><input type="button" class="start-vote" value="Commencer le premier tour"></a>
-=======
-				<a href={{path('session_dashboard',{'id':session.id} )}}><input type="button" class="start-vote" value="Commencer le premier tour"></a>
->>>>>>> 7b8ff860b73c1b9486afa96314f56efd5b331f7e
+			<a href={{path('session_dashboard',{'id':session.id} )}}><input type="button" class="start-vote" value="Commencer le premier tour"></a>
 			</div>
 		</form>
 	</div>
 </div>
 
+	<script>
+
+	//selection des candidats
+	const listeCandidats = document.querySelector(".liste-candidats")
+
+	const listeCandidatsGroup = document.querySelector(".liste-candidats-group")
+	const addCandidats = document.querySelector('.add-candidats')
+
+	addCandidats?. addEventListener("click", function () {
+		const ajoutListeCandidats = listeCandidats.cloneNode(true)
+		listeCandidatsGroup.appendChild(ajoutListeCandidats)
+	})
+
+	const sendCandidatesList = document.querySelector('.start-vote')
+	const url = window.location.toString()
+	console.log(url);
+	sendCandidatesList ?. addEventListener('click', (event) => {
+
+	const candidatesToBeElected = document.querySelectorAll(".candidats")
+	let binome = [];
+
+	for (let i = 0; i < candidatesToBeElected.length; i++) {
+		if (i % 2 === 0) {
+			binome[i] = candidatesToBeElected[i].value
+		} else {
+			binome[i] = candidatesToBeElected[i].value
+		}
+	}
+	//Requête pour sélectionner les candidats et les sauvegarder en base
+	const request = new XMLHttpRequest();
+	request.open('POST', url, true)
+	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+	request.addEventListener('onreadystatechange', () => {
+		if (request.readyState === XMLHttpRequest.DONE) {
+			if (request.status === 200) {
+				const response = JSON.parse(request.response);
+				console.log("ca marche");
+			} else {
+				console.error('ca marche pas !');
+			}
+		}
+	});
+	binome = JSON.stringify(binome);
+	request.send("binome=" + encodeURIComponent(binome))
+
+	})
+	</script>

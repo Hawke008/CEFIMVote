@@ -57,7 +57,7 @@ class SessionsRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
-
+    
 }
 //    /**
 //     * @return Sessions[] Returns an array of Sessions objects

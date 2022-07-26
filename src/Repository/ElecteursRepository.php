@@ -41,7 +41,9 @@ class ElecteursRepository extends ServiceEntityRepository
 
 
 
-
+public function findElecteurByCodeSession($code){
+    
+}
 //    /**
 //     * @return Electeurs[] Returns an array of Electeurs objects
 //     */

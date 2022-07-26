@@ -28,11 +28,11 @@
 			<h2 class="my-3 ms-0 highlight-text">Register</h2>
 
 			{{form_start(electeurIdForm)}}
-			{{form_row(electeurIdForm.nom, {
-            label: 'Nom'
-        }) }}
 			{{form_row(electeurIdForm.prenom, {
             label: 'Prenom'
+        }) }}
+		{{form_row(electeurIdForm.nom, {
+            label: 'Nom'
         }) }}
 			{{form_row(electeurIdForm.signature,  {
             label: 'Signature'
