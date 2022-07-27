@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tour 1 | Vote Electeur{% endblock %}
+
+{% block body %}
+
+<style>
+
+.register {
+   background-color: var(--dark-grey);
+   color:white;
+   font-weight:700;
+   width:250px;
+   border:1px solid var(--dark-grey);
+   margin-top:15px;
+}
+
+.highlight-text{
+	font-weight:700
+}
+
+.form-container{
+    margin-top:3%;
+}
+.liste-candidat-container{
+    margin-top: 8px;
+    margin-bottom:8px;
+}
+   
+.candidats-selection{
+margin-left:10px;
+font-size:18px;
+}
+
+.form{
+    margin-top:30px;
+}
+
+</style>
+    <div class="d-flex justify-content-center">
+<div class="w-50 form-container  ">
+    <h2 class="my-2 ms-0 highlight-text ">Election des représentants de promotion</h2>
+    <h5><strong>Premier tour</strong>, vote de {{electeur.prenom}} {{electeur.nom}}</h5>
+    <form class="form">
+    {% for candidat in candidats%}
+        <div class="liste-candidat-container">
+            <input type="checkbox" class="selection-candidat" value={{candidat.id}}><span class= "candidats-selection">{{candidat.titulaire}} / {{candidat.suppleant}}</span></input>
+        </div>
+    {% endfor %}
+    </form>
+    <div class='d-flex justify-content-end'>
+        <a href={{path('app_resultat_votes')}}><button type="submit" class="register">Valider</button></a>
+    </div>
+
+    </div>
+       </div>
+
+
+
+<script>
+
+const submitVote=document.querySelector(".register")
+
+const url = window.location.toString()
+
+submitVote.addEventListener('click', function(){
+    
+    let resultatSelection=0;
+    const selectionCandidat=document.querySelectorAll(".selection-candidat")
+   
+        for (let i = 0; i < selectionCandidat.length; i++) {
+        if (selectionCandidat[i].checked) {
+           resultatSelection = selectionCandidat[i].value
+        }
+    }
+    const request = new XMLHttpRequest();
+    request.open('POST', url, true)
+    request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+    request.addEventListener('onreadystatechange', () => {
+        if (request.readyState === XMLHttpRequest.DONE) {
+            if (request.status === 200) {
+                const response = JSON.parse(request.response);
+                console.log("ca marche");
+            } else {
+                console.error('ca marche pas !');
+            }
+        }
+    })
+    vote= JSON.stringify(resultatSelection);
+    request.send("voteUn=" + encodeURIComponent(vote)+"candidats=" +encodeUruCa)
+    console.log(resultatSelection)
+
+})
+
+
+
+	
+
+</script>
+
+{% endblock %}

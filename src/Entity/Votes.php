@@ -19,7 +19,7 @@ class Votes
     #[ORM\ManyToOne(targetEntity: Electeurs::class, inversedBy: 'votes')]
     private $electeur;
 
-    #[ORM\ManyToOne(targetEntity: candidats::class, inversedBy: 'votes')]
+    #[ORM\ManyToOne(targetEntity: Candidats::class, inversedBy: 'votes')]
     private $candidat;
 
     public function getId(): ?int

@@ -40,14 +40,15 @@ class ElecteurController extends AbstractController
         return $this->render('electeur/login.html.twig');
     }
 
+
     #[Route('/electeur/identification', name: 'electeur_identification')]
     public function identification(
         Request $request, 
         SessionsRepository $sessionsRepository, 
         EntityManagerInterface $entityManager): Response
     {
-        $session=$request->getSession();
-        $codeSession=$session->get('codeSession');
+        $sessionNavigateur=$request->getSession();
+        $codeSession=$sessionNavigateur->get('codeSession');
 
         $electeur = new Electeurs();
         $form = $this->createForm(ElecteurIdentificationFormType::class);
@@ -64,7 +65,10 @@ class ElecteurController extends AbstractController
             $entityManager->persist($electeur);
             $entityManager->flush();
             
-            return $this->redirectToRoute('app_electeur_vote_un');
+            $electeurId=$electeur->getId();
+            $sessionId=$electeur->getSession()->getId();
+
+            return $this->redirectToRoute('app_vote_un', ['electeurId'=>$electeurId, 'sessionId'=>$sessionId]);
         }
 
         return $this->render('electeur/index.html.twig', [
@@ -72,11 +76,5 @@ class ElecteurController extends AbstractController
         ]);
     }
 
-    #[Route('/electeur/vote', name: 'app_electeur_vote_un')]
-    public function electeurVote(): Response
-    {
-        return $this->render('electeur/vote.html.twig', [
-            // 'electeurIdForm' => $form->createView(),
-        ]);
-    }
+    
 }

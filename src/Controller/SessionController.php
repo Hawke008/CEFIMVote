@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Candidats;
 use App\Entity\Electeurs;
 use App\Entity\Sessions;
+use App\Entity\Votes;
 use App\Form\CreateSessionFormType;
 use App\Repository\CandidatsRepository;
 use App\Repository\ElecteursRepository;
@@ -35,29 +36,34 @@ class SessionController extends AbstractController
         $state= $sessionInfos->getState();
         
         if ($request->isMethod('post')) {
-        
-        $resultat=$request->request->get('resultat');
-        $resultat=json_decode($resultat);
-
-           dd($resultat);
-
+            
+            $resultat=$request->request->get('resultat');
             $binome=$request->request->get('binome');
-           
-            $binome=json_decode($binome);
+            
+            if ($binome){
 
-            foreach($binome as $key=>$value){
-                $candidats=new Candidats();
-                if(intval($key)%2==0){
-                    $candidats->setTitulaire($electeurs->find($value));
-                    $candidats->setSuppleant($electeurs->find($binome[$key+1]));
-                    $candidats->setSession($session->find($id));
-                    $entityManager->persist($candidats);
-                    $entityManager->flush();
+                $binome=json_decode($binome);
+
+                foreach($binome as $key=>$value){
+                    $candidats=new Candidats();
+                    if(intval($key)%2==0){
+                        $candidats->setTitulaire($electeurs->find($value));
+                        $candidats->setSuppleant($electeurs->find($binome[$key+1]));
+                        $candidats->setSession($session->find($id));
+                        $entityManager->persist($candidats);
+                        $entityManager->flush();
+                    }
+                    $this->updateState($entityManager,$sessionInfos->getId(),1);
                 }
-                $this->updateState($entityManager,$sessionInfos->getId(),1);
             }
-
+            else if ($resultat){
+                
+                $resultat=json_decode($resultat);
+                
+                }
+                
         }
+        
         return $this->render('session/index.html.twig', ['electeurs' => $electeurSession, 'session' => $sessionInfos, 'state'=>$state,'candidats'=>$candidats,]);
     }
 
