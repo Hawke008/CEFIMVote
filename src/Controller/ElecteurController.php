@@ -73,6 +73,7 @@ class ElecteurController extends AbstractController
 
         return $this->render('electeur/index.html.twig', [
             'electeurIdForm' => $form->createView(),
+
         ]);
     }
 
