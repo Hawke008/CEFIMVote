@@ -15,9 +15,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SessionController extends AbstractController
 {
+
+    private $client;
+
+    public function __construct(HttpClientInterface $client)
+    {
+        $this->client = $client;
+    }
+
     #[Route('/session/dashboard/{id}', name: 'session_dashboard', methods: ['GET','POST'])]
     public function showDashboard(
         EntityManagerInterface $entityManager, 
@@ -36,10 +45,10 @@ class SessionController extends AbstractController
         
         if ($request->isMethod('post')) {
         
-        $resultat=$request->request->get('resultat');
-        $resultat=json_decode($resultat);
+            $resultat=$request->request->get('resultat');
+            $resultat=json_decode($resultat);
 
-           dd($resultat);
+
 
             $binome=$request->request->get('binome');
            
@@ -58,6 +67,7 @@ class SessionController extends AbstractController
             }
 
         }
+        $this->fetchSubscribers($sessionInfos->getCodeSession());
         return $this->render('session/index.html.twig', ['electeurs' => $electeurSession, 'session' => $sessionInfos, 'state'=>$state,'candidats'=>$candidats,]);
     }
 
@@ -72,6 +82,29 @@ class SessionController extends AbstractController
         return $this->redirectToRoute('session_dashboard', [
             'id' => $session->getId()
         ]);
+    }
+
+    public function fetchSubscribers(String $topic): array
+    {
+        $response = $this->client->request(
+            'GET',
+           'http://localhost:3000/.well-known/subscriptions/'.$topic,
+            [
+                'auth_bearer' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOltdfX0.Oo0yg7y4yMa1vr_bziltxuTCqb8JVHKxp-f_FwwOim0',
+                'headers' => [
+                    'Content-Type' => 'application/ld+json',
+                ],
+            ]
+        );
+
+        $statusCode = $response->getStatusCode();
+        // $statusCode = 200
+        if ($statusCode === 200){
+            $content = $response->toArray();
+        }
+        dd($response);
+
+        return $content;
     }
 
     public function generateRandomString($length = 8) {

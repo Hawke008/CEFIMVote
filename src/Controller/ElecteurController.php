@@ -48,7 +48,6 @@ class ElecteurController extends AbstractController
     {
         $session=$request->getSession();
         $codeSession=$session->get('codeSession');
-
         $electeur = new Electeurs();
         $form = $this->createForm(ElecteurIdentificationFormType::class);
         $form->handleRequest($request);
@@ -69,14 +68,17 @@ class ElecteurController extends AbstractController
 
         return $this->render('electeur/index.html.twig', [
             'electeurIdForm' => $form->createView(),
+
         ]);
     }
 
     #[Route('/electeur/vote', name: 'app_electeur_vote_un')]
-    public function electeurVote(): Response
+    public function electeurVote( Request $request): Response
     {
+        $session=$request->getSession();
+        $codeSession=$session->get('codeSession');
         return $this->render('electeur/vote.html.twig', [
-            // 'electeurIdForm' => $form->createView(),
+            'codeSession' => $codeSession,
         ]);
     }
 }
