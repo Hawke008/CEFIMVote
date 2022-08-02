@@ -129,17 +129,14 @@
 				<div class="col text-start ">
 					<div class="col">
 					<p><strong>PREMIER TOUR</strong></p>
-<<<<<<< HEAD
+
 						<p class="votes-total-number">Nombre de votants : <span class="highlight-votes first"></span><span class="highlight-votes">/{{electeurs|length}}</span></p>
-=======
-						<p class="votes-total-number">Nombre de votants : <span class="highlight-votes">13 / {{electeurs|length}}</span></p>
->>>>>>> 38dd36d87055b5f3952197a08fb60004787822c3
+
 						{{include('session/partials/_vote_results.html.twig')}}
 					</div>
 				</div>
 			</div>
 		{% endif %}
-<<<<<<< HEAD
 	<script>
 		let nombreVotes = 0
 		const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
@@ -151,11 +148,3 @@
 	</script>
 
 	{% endblock %}
-
-
-=======
-		
-
-	{% endblock %}
-
->>>>>>> 38dd36d87055b5f3952197a08fb60004787822c3

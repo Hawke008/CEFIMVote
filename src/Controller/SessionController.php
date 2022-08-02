@@ -66,19 +66,13 @@ class SessionController extends AbstractController
                         $entityManager->persist($candidats);
                         $entityManager->flush();
                     }
-<<<<<<< HEAD
+
                     $this->updateState($entityManager,$sessionInfos->getId(),$state,$hub);
                 }
             }
             if($state==2){
                 $this->updateState($entityManager,$sessionInfos->getId(),$state,$hub);
-=======
-                    $this->updateState($entityManager,$sessionInfos->getId(),$state);
-                }
-            }
-            if($state==2){
-                $this->updateState($entityManager,$sessionInfos->getId(),$state);
->>>>>>> 38dd36d87055b5f3952197a08fb60004787822c3
+
 
             ;}
             // else if ($resultat){
@@ -95,14 +89,12 @@ class SessionController extends AbstractController
 
     public function updateState(EntityManagerInterface $entityManager,int $id, int $state,HubInterface $hub): Response
     {
-<<<<<<< HEAD
         $update = new Update(
             'test',
             'done'
         );
         $hub->publish($update);
-=======
->>>>>>> 38dd36d87055b5f3952197a08fb60004787822c3
+
         $session = $entityManager->getRepository(Sessions::class)->find($id);
         $session->setState($state);
         $entityManager->persist($session);
@@ -113,31 +105,7 @@ class SessionController extends AbstractController
         ]);
     }
 
-<<<<<<< HEAD
-=======
-    public function fetchSubscribers(String $topic): array
-    {
-        $response = $this->client->request(
-            'GET',
-           'http://localhost:3000/.well-known/subscriptions/'.$topic,
-            [
-                'auth_bearer' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOltdfX0.Oo0yg7y4yMa1vr_bziltxuTCqb8JVHKxp-f_FwwOim0',
-                'headers' => [
-                    'Content-Type' => 'application/ld+json',
-                ],
-            ]
-        );
 
-        $statusCode = $response->getStatusCode();
-        // $statusCode = 200
-        if ($statusCode === 200){
-            $content = $response->toArray();
-        }
-        dd($response);
-
-        return $content;
-    }
->>>>>>> 38dd36d87055b5f3952197a08fb60004787822c3
 
     public function generateRandomString($length = 8) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
