@@ -31,9 +31,59 @@
 		<div class="row m-0 mt-5 p-0">
 			<div class="col-3"></div>
 			<div class="col-9 p-0">
-				<a href={{path('session_dashboard',{'id':session.id} )}}><input type="button" class="start-vote" value="Commencer le premier tour"></a>
+			<a class="start-vote" href={{path('session_dashboard',{'id':session.id} )}}>
+			dddddd
+				{# <input type="button" value="Commencer le premier tour"> #}
+			</a>
+				{# <input type="button" class="start-vote" value="Commencer le premier tour"> #}
 			</div>
 		</form>
 	</div>
 </div>
 
+<script>
+
+//selection des candidats
+const listeCandidats = document.querySelector(".liste-candidats")
+const listeCandidatsGroup = document.querySelector(".liste-candidats-group")
+const addCandidats = document.querySelector('.add-candidats')
+addCandidats?. addEventListener("click", function () {
+	const ajoutListeCandidats = listeCandidats.cloneNode(true)
+	listeCandidatsGroup.appendChild(ajoutListeCandidats)
+})
+	
+const sendCandidatesList = document.querySelector('.start-vote')
+const url = window.location.toString()
+sendCandidatesList ?. addEventListener('click', (event) => {
+	
+	const candidatesToBeElected = document.querySelectorAll(".candidats")
+	let binome = [];
+
+	for (let i = 0; i < candidatesToBeElected.length; i++) {
+		if (i % 2 === 0) {
+			binome[i] = candidatesToBeElected[i].value
+		} else {
+			binome[i] = candidatesToBeElected[i].value
+		}
+	}
+
+	const request = new XMLHttpRequest();
+	request.open('POST', url, true)
+	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+	request.addEventListener('onreadystatechange', (event) => {
+
+		if (request.readyState === XMLHttpRequest.DONE) {
+			if (request.status === 200) {
+				const response = JSON.parse(request.response);
+				document.location.href=event.target.href;
+			} else {
+				console.error('ca marche pas !');
+			}
+		}
+	});
+	let state=1
+	binome=JSON.stringify(binome)
+	request.send("binome=" + encodeURIComponent(binome) + "&"+"state=" + encodeURIComponent(state))
+	
+})
+</script>	

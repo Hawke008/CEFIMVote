@@ -42,7 +42,17 @@
 		.highlight-text {
 			font-weight: 700
 		}
+.highlight-votes{
+	background-color:var(--logo-bg-color);
+	padding-right:5px;
+	padding-left:3px;
+	border: 1px solid var(--logo-bg-color) ;
+	border-radius:20px;
+	color:white;
+}
+
 	</style>
+	{{dump(state)}}
 	<div class="row ">
 		<div class="col-5 highlight-text">
 
@@ -90,7 +100,7 @@
 				</div>
 				<div class="col">
 					<ul>
-						{% for electeur in electeurs%}
+						{% for electeur in electeurs %}
 							<li>{{electeur.prenom}}
 								{{electeur.nom}}</li>
 						{% endfor %}
@@ -112,59 +122,29 @@
 			</div>
 			{{include('session/partials/_select_candidates.html.twig')}}
 		{% endif %}
-		{%if state==1%}
+		{% if state==1 or state==2%}
 			<div class="col-2 text-center highlight-text">
-				Résultats Tour n°1
+				Résultats
 			</div>
-			{{include('session/partials/_vote_results.html.twig')}}
-		</div>
-	{% endif %}
-
+				<div class="col text-start ">
+					<div class="col">
+					<p><strong>PREMIER TOUR</strong></p>
+						<p class="votes-total-number">Nombre de votants : <span class="highlight-votes first"></span><span class="highlight-votes">/{{electeurs|length}}</span></p>
+						{{include('session/partials/_vote_results.html.twig')}}
+					</div>
+				</div>
+			</div>
+		{% endif %}
 	<script>
-
-	//selection des candidats
-	const listeCandidats = document.querySelector(".liste-candidats")
-
-	const listeCandidatsGroup = document.querySelector(".liste-candidats-group")
-	const addCandidats = document.querySelector('.add-candidats')
-
-	addCandidats?. addEventListener("click", function () {
-		const ajoutListeCandidats = listeCandidats.cloneNode(true)
-		listeCandidatsGroup.appendChild(ajoutListeCandidats)
-	})
-
-	const sendCandidatesList = document.querySelector('.start-vote')
-	const url = window.location.toString()
-	console.log(url);
-	sendCandidatesList ?. addEventListener('click', (event) => {
-
-	const candidatesToBeElected = document.querySelectorAll(".candidats")
-	let binome = [];
-
-	for (let i = 0; i < candidatesToBeElected.length; i++) {
-		if (i % 2 === 0) {
-			binome[i] = candidatesToBeElected[i].value
-		} else {
-			binome[i] = candidatesToBeElected[i].value
+		let nombreVotes = 0
+		const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
+		eventSource.onmessage = event => {
+			nombreVotes += 1;
+			document.querySelector(".first").innerText = nombreVotes;
+			console.log(JSON.parse(event.data))
 		}
-	}
-	//Requête pour sélectionner les candidats et les sauvegarder en base
-	const request = new XMLHttpRequest();
-	request.open('POST', url, true)
-	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-	request.addEventListener('onreadystatechange', () => {
-		if (request.readyState === XMLHttpRequest.DONE) {
-			if (request.status === 200) {
-				const response = JSON.parse(request.response);
-				console.log("ca marche");
-			} else {
-				console.error('ca marche pas !');
-			}
-		}
-	});
-	binome = JSON.stringify(binome);
-	request.send("binome=" + encodeURIComponent(binome))
-
-	})
 	</script>
-{% endblock %}
+
+	{% endblock %}
+
+

@@ -1,6 +1,7 @@
 # Learn how to configure the Mercure.rocks Hub on https://mercure.rocks/docs/hub/config
 {
 	{$GLOBAL_OPTIONS}
+	debug
 }
 
 
@@ -27,7 +28,7 @@ route {
 		publish_origins *
 		demo
 		anonymous
-		subscriptions
+		subscriptions 1
 		# Extra directives
 		{$MERCURE_EXTRA_DIRECTIVES}
 	}

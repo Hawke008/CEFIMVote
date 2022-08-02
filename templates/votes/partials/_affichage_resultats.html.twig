@@ -1,0 +1,56 @@
+
+	<style>
+
+		.register {
+			background-color: var(--dark-grey);
+			color: white;
+			font-weight: 700;
+			width: 250px;
+			border: 1px solid var(--dark-grey);
+			margin-top: 15px;
+		}
+
+		.highlight-text {
+			font-weight: 700
+		}
+
+		.form-container {
+			margin-top: 3%;
+		}
+		.liste-candidat-container {
+			margin-top: 4px;
+			margin-bottom: 4px;
+            
+		}
+		.form {
+			margin-top: 30px;
+		}
+
+        .conclusion-vote{
+            font-weight:700;
+            margin-top:15px;
+        }
+	</style>
+	
+<div class="d-flex justify-content-start">
+	<div class="liste-candidat-container d-flex flex-column">
+		{% for candidat in candidats%}
+			<span type="checkbox" class="selection-candidat" value={{candidat.id}}>
+				<span class="candidats-selection">
+					{{candidat.titulaire}}
+					/
+					{{candidat.suppleant}}<span>.............................</span>
+				</span>
+			</span>
+		{% endfor %}
+	</div>
+	<div class="vote-resultat-container d-flex flex-column justify-content-center">
+		{% for resultat in resultatByBinome%}
+			<span class="d-flex justify-content-end ms-4"> {{resultat}}
+				vote(s)</span>
+		{% endfor %}
+	</div>
+</div>
+
+<p class="conclusion-vote">>>
+	{{conclusionVote}}</p>

@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Controller;
-use App\Entity\Candidats;
-use App\Entity\Sessions;
+
 use App\Entity\Electeurs;
 use App\Repository\SessionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,62 +10,75 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use function PHPUnit\Framework\isNull;
 
 class ElecteurController extends AbstractController
 {
-
+   
     #[Route('/electeur', name: 'electeur_login')]
-    public function login(Request $request,SessionsRepository $sessionsRepository): Response
+    public function login(
+        Request $request, 
+        SessionsRepository $sessionsRepository, 
+        ): Response
     {
 
         if ($request->isMethod('post')) {
-            $code = $request->request->get('code');
 
-            if(is_object($sessionsRepository->findOneByCode($code))){
+            $codeSession = $request->request->get('code');
+            $codeSession = str_replace(' ', '', $codeSession);
+
+            $session=$request->getSession();
+            $session->set('codeSession', $codeSession);
+        
+
+            if (!is_null($sessionsRepository->findOneByCode($codeSession))) {
+
                 return $this->redirectToRoute('electeur_identification');
-            }
-            else{
-                $this->addFlash('error','Votre code de session est invalide');
+
+            } else {
+                $this->addFlash('error', 'Votre code de session est invalide');
             }
         }
-
         return $this->render('electeur/login.html.twig');
     }
 
     #[Route('/electeur/identification', name: 'electeur_identification')]
-    public function Identification(Request $request, SessionsRepository $sessionsRepository,EntityManagerInterface $entityManager): Response
+    public function identification(
+        Request $request, 
+        SessionsRepository $sessionsRepository, 
+        EntityManagerInterface $entityManager): Response
     {
+        $sessionNavigateur=$request->getSession();
+        $codeSession=$sessionNavigateur->get('codeSession');
 
         $electeur = new Electeurs();
-        $form = $this->createForm( ElecteurIdentificationFormType::class);
+        $form = $this->createForm(ElecteurIdentificationFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
             $formdata = $form->getData();
+            
             $electeur->setNom($formdata->getNom());
             $electeur->setPrenom($formdata->getPrenom());
             $electeur->setSignature($formdata->getSignature());
-            
-            // $session=$sessionsRepository->getId();
-            // dd($session);
-            // dd($sessionId);
-            // $electeur->setSession();
+            $electeur->setSession($sessionsRepository->findOneByCode($codeSession));
             $entityManager->persist($electeur);
             $entityManager->flush();
+            $electeurId=$electeur->getId();
+            $sessionId=$electeur->getSession()->getId();
+
+            // $response = $this->forward('App\Controller\VotesController::electeurVote', ['electeurId'=>$electeurId, 'sessionId'=>$sessionId]);
+
+            return $this->redirectToRoute('app_vote', ['electeurId'=>$electeurId, 'sessionId'=>$sessionId]);
           
-            return $this->redirectToRoute('app_electeur_vote_un');
         }
+
         return $this->render('electeur/index.html.twig', [
             'electeurIdForm' => $form->createView(),
+
         ]);
     }
 
-    #[Route('/electeur/vote', name: 'app_electeur_vote_un')]
-    public function electeurVote(): Response
-    {
-        return $this->render('electeur/vote.html.twig', [
-            // 'electeurIdForm' => $form->createView(),
-        ]);
-    }
+
+    
 }

@@ -1,5 +1,6 @@
 :root{
     --dark-grey: #666666;
+    --medium-grey: #787878;
     --light-grey: #F1F2F2;
     --logo-bg-color: #FD7E37;
     
@@ -9,6 +10,7 @@ body{
     padding-left:30px;
     padding-right:30px;
     background-color: var(--light-grey);
+   
 }
 
 *{

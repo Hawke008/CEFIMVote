@@ -39,7 +39,6 @@ class SessionsRepository extends ServiceEntityRepository
         }
     }
 
-
     public function getId()
     {
         $query = $this->createQueryBuilder('e')
@@ -58,7 +57,7 @@ class SessionsRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
-
+    
 }
 //    /**
 //     * @return Sessions[] Returns an array of Sessions objects

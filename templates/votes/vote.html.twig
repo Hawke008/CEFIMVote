@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tour 1 | Vote Electeur{% endblock %}
+
+{% block body %}
+
+<style>
+.register {
+   background-color: var(--dark-grey);
+   color:white;
+   font-weight:700;
+   width:250px;
+   border:1px solid var(--dark-grey);
+   margin-top:15px;
+}
+.highlight-text{
+	font-weight:700
+}
+.form-container{
+    margin-top:3%;
+}
+.liste-candidat-container{
+    margin-top: 8px;
+    margin-bottom:8px;
+}
+   
+.candidats-selection{
+margin-left:10px;
+}
+.form{
+    margin-top:30px;
+}
+</style>
+    <div id="main-container" class="d-flex justify-content-center">
+    {% if electeurVote%}
+        <p>Veuillez patientez le temps que Benoist ou Antho ou Mickael se bougent !!!!</p>
+    {% else%}
+        <div id="form" class="w-50 form-container  ">
+            <h2 class="my-2 ms-0 highlight-text ">Election des représentants de promotion</h2>
+            <h5><strong>{% if state==1 %}Premier tour{% endif %}{% if state==2 %}Deuxième tour{% endif %}</strong>, vote de {{electeur.prenom}} {{electeur.nom}}</h5>
+            <form class="form">
+                {% for candidat in candidats%}
+                    <div class="liste-candidat-container">
+                        <input type="checkbox" class="selection-candidat" value={{candidat.id}}><span class= "candidats-selection">{{candidat.titulaire}} / {{candidat.suppleant}}</span></input>
+                    </div>
+                {% endfor %}
+            </form>
+            <div class='d-flex justify-content-end'>
+                <a id="link" href={{path('app_resultat_votes')}}><button type="submit" class="register">Valider</button></a>
+                {# <button type="submit" class="register">Valider</button> #}
+            </div>
+
+            <script>
+
+                const submitVote=document.querySelector(".register")
+                submitVote.addEventListener('click', function(e){
+                    e.preventDefault();
+                    document.querySelector('#form').remove();
+                    let waitingMessage = document.createElement('p')
+                    waitingMessage.innerText = "Veuillez patientez le temps que Benoist ou Antho ou Mickael se bougent !!!!";
+                    document.querySelector('#main-container').append(waitingMessage);
+                    let resultatSelection=0;
+                    const selectionCandidat=document.querySelectorAll(".selection-candidat")
+
+                    for (let i = 0; i < selectionCandidat.length; i++) {
+                        if (selectionCandidat[i].checked) {
+                            resultatSelection = selectionCandidat[i].value
+                        }
+                    }
+                    const request = new XMLHttpRequest();
+                    request.open('POST', 'http://127.0.0.1:8000/electeur/vote')
+                    request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+                    request.setRequestHeader('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOltdfX0.Oo0yg7y4yMa1vr_bziltxuTCqb8JVHKxp-f_FwwOim0')
+                    request.addEventListener('onreadystatechange', () => {
+                        if (request.readyState === XMLHttpRequest.DONE) {
+                            if (request.status === 200) {
+                                const response = JSON.parse(request.response);
+                                console.log("ca marche");
+                            } else {
+                                console.error('ca marche pas !');
+                            }
+                        }
+                    })
+                    let vote=JSON.stringify(resultatSelection);
+                    let message = "À voté!"
+                    request.send("electeurId="+electeurId+"&sessionId=1topic=test&data="+message+"&vote="+vote);
+                })
+            </script>
+        </div>
+    {% endif %}
+
+
+<script>
+const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
+
+const link = "{{path('app_resultat_votes')}}"
+console.log(link);
+const electeurId = "{{ electeurId }}";
+eventSource.onmessage= event => {
+    if(event.data === "done"){
+        document.location = link;
+    }
+    twitter.appendChild(message);
+}
+
+	
+</script>
+
+{% endblock %}

@@ -34,6 +34,8 @@
 			</nav> #}
 	{% set current_path = app.request.get('_route') %}
 	<div class='mt-5 mb-5 p-2'>
+{% if current_path!='app_home'%}
+
 		<div class='text-start mt-3 d-flex justify-content-between align-items-center'>
 			<h1>CEFIMVote</h1>
 			<div class="d-flex justify-content-between align-items-center">
@@ -48,13 +50,13 @@
 			{% endif %}
 			</div>
 		</div>
-
-
 	</div>
-
-	{# <div class="mt-5" style="margin-top:300px">
+	{% endif %}
+{# {% elseif 'electeur' in url %}
+	<div class="mt-5" style="margin-top:300px">
 				<div class='text-center'>
 					<h1>CEFIMVote</h1>
 				</div>
-			</div> #}
+			</div>
+			{% endif %} #}
 </header>

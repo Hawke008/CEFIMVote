@@ -1,50 +1,83 @@
-<div class="col-5 ">
-	<form>
-		<div class="row mb-4 resultats-votes">
-			<div class="col">
-				<p class="votes-number">Nombre de votants : 13/13</p>
-				<ul>
-					{% for candidat in candidats %}
-						{%if candidat.titulaire%}
-							<li>Résultats des votes .............. : ...votes</li>
-							<span>Titulaire :
-								{{candidat.titulaire}}<span></br>
-								{%else%}
-								<span>Suppléant :
-									{{candidat.suppleant}}<span></br>
-								</br>
-							{% endif %}
-							{%endfor%}
-						</ul>
-					</div>
-				</div>
-				<div class="row mt-5 p-0 ">
-					<div class="col"><input type="button" class="close-vote" value="Clôturer le vote"></div>
-					<div class="col p-0"></div>
-				</div>
-			</form>
+<style>
+.votes-binomes-container{
+	margin-bottom:25px;
+}
+
+.liste{
+	list-style:none;
+}
+
+.results{
+	width:fit-content;
+	padding:0px 3px 0px 3px;
+	font-weight:700
+}
+</style>
+
+<div>
+{{render(path('app_affichage_resultat_votes'))}}
+</div>
+
+<div class="row mt-5 p-0 ">
+		<div class="col next-step-button-container"><input type="button" class="close-vote" value="Clôturer le vote"></div>
+			<div class="col p-0"></div>
 		</div>
+</div>
 
-		<script>
-			const resultatsVoteContainer = document.querySelector('.resultats-votes')
-const clotureVote = document.querySelector('.close-vote');
-const resultats = document.createElement('p');
+<div class="resultat-second-tour" hidden>
+	<p>
+		<strong>SECOND TOUR</strong>
+	</p>
+	<p class="votes-total-number">Nombre de votants : <span class="highlight-votes">13 / {{electeurs|length}}</span></p>
 
-resultats.textContent = "BLAHHHH";
-if (resultats.className != "lancer-second-tour") {
-clotureVote ?. addEventListener('click', function (e) {
-e.stopPropagation()
-clotureVote.value = "Commencer le second Tour"
-resultatsVoteContainer.append(resultats)
+	{{render(path('app_affichage_resultat_votes'))}}
+</div>
+
+
+<script>
+let state=1;
+
+const clotureVote = document.querySelector('.close-vote')
+let lancerSecondTour = clotureVote.cloneNode(true)
+lancerSecondTour.value="Lancer le second tour"
+
+const buttonContainer=document.querySelector('.next-step-button-container')
+clotureVote?.addEventListener('click', function(){
+	buttonContainer.removeChild(clotureVote);
+	buttonContainer.appendChild(lancerSecondTour);
 })
-}
-resultats.className = "lancer-second-tour"
-if (resultats.className == "lancer-second-tour") {
-clotureVote ?. addEventListener('click', function () {
+let affichageResultatSecondTour=document.querySelector('.resultat-second-tour')
 
-console.log("Gelko")
+lancerSecondTour.addEventListener('click', function(){
+buttonContainer.removeChild(lancerSecondTour);
+	const url = window.location.toString();
+
+	const request = new XMLHttpRequest();
+
+	request.open('post', url, true)
+	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+	request.addEventListener('onreadystatechange', () => {
+		if (request.readyState === XMLHttpRequest.DONE) {
+			if (request.status === 200) {
+				const response = JSON.parse(request.response);
+				console.log("ca marche");
+			} else {
+				console.error('ca marche pas !');
+			}
+		}
+	});	
+	let state=2
+	request.send("state=" + encodeURIComponent(state))
+
+{if (state==2){
+
+	affichageResultatSecondTour.hidden=false;
+	
+}}
+
 })
 
+	
 
-}
-		</script>
+
+</script>
