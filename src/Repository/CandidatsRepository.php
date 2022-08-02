@@ -39,6 +39,13 @@ class CandidatsRepository extends ServiceEntityRepository
         }
     }
 
+    public function getCandidatsId(): array
+       {
+           return $this->createQueryBuilder('c')
+               ->select('c.id')
+               ->getQuery()
+               ->getResult();
+       }
 //    /**
 //     * @return Candidats[] Returns an array of Candidats objects
 //     */

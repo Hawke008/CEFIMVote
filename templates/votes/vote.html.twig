@@ -5,7 +5,6 @@
 {% block body %}
 
 <style>
-
 .register {
    background-color: var(--dark-grey);
    color:white;
@@ -14,11 +13,9 @@
    border:1px solid var(--dark-grey);
    margin-top:15px;
 }
-
 .highlight-text{
 	font-weight:700
 }
-
 .form-container{
     margin-top:3%;
 }
@@ -29,18 +26,15 @@
    
 .candidats-selection{
 margin-left:10px;
-font-size:18px;
 }
-
 .form{
     margin-top:30px;
 }
-
 </style>
     <div class="d-flex justify-content-center">
 <div class="w-50 form-container  ">
     <h2 class="my-2 ms-0 highlight-text ">Election des représentants de promotion</h2>
-    <h5><strong>Premier tour</strong>, vote de {{electeur.prenom}} {{electeur.nom}}</h5>
+    <h5><strong>{% if state==1 %}Premier tour{% endif %}{% if state==2 %}Deuxième tour{% endif %}</strong>, vote de {{electeur.prenom}} {{electeur.nom}}</h5>
     <form class="form">
     {% for candidat in candidats%}
         <div class="liste-candidat-container">
@@ -49,25 +43,22 @@ font-size:18px;
     {% endfor %}
     </form>
     <div class='d-flex justify-content-end'>
-        <a href={{path('app_resultat_votes')}}><button type="submit" class="register">Valider</button></a>
+          <a href={{path('app_resultat_votes')}}><button type="submit" class="register">Valider</button></a>
+          {# <button type="submit" class="register">Valider</button> #}
     </div>
 
     </div>
        </div>
 
-
-
 <script>
-
 const submitVote=document.querySelector(".register")
 
 const url = window.location.toString()
+submitVote.addEventListener('click', function(e){
 
-submitVote.addEventListener('click', function(){
-    
     let resultatSelection=0;
     const selectionCandidat=document.querySelectorAll(".selection-candidat")
-   
+ 
         for (let i = 0; i < selectionCandidat.length; i++) {
         if (selectionCandidat[i].checked) {
            resultatSelection = selectionCandidat[i].value
@@ -86,16 +77,10 @@ submitVote.addEventListener('click', function(){
             }
         }
     })
-    vote= JSON.stringify(resultatSelection);
-    request.send("voteUn=" + encodeURIComponent(vote)+"candidats=" +encodeUruCa)
-    console.log(resultatSelection)
-
+    vote=JSON.stringify(resultatSelection);
+    request.send("vote=" + encodeURIComponent(vote))
 })
-
-
-
 	
-
 </script>
 
 {% endblock %}

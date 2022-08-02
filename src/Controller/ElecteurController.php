@@ -28,6 +28,7 @@ class ElecteurController extends AbstractController
 
             $session=$request->getSession();
             $session->set('codeSession', $codeSession);
+        
 
             if (!is_null($sessionsRepository->findOneByCode($codeSession))) {
 
@@ -39,7 +40,6 @@ class ElecteurController extends AbstractController
         }
         return $this->render('electeur/login.html.twig');
     }
-
 
     #[Route('/electeur/identification', name: 'electeur_identification')]
     public function identification(
@@ -64,11 +64,13 @@ class ElecteurController extends AbstractController
             $electeur->setSession($sessionsRepository->findOneByCode($codeSession));
             $entityManager->persist($electeur);
             $entityManager->flush();
-            
             $electeurId=$electeur->getId();
             $sessionId=$electeur->getSession()->getId();
 
-            return $this->redirectToRoute('app_vote_un', ['electeurId'=>$electeurId, 'sessionId'=>$sessionId]);
+            // $response = $this->forward('App\Controller\VotesController::electeurVote', ['electeurId'=>$electeurId, 'sessionId'=>$sessionId]);
+
+            return $this->redirectToRoute('app_vote', ['electeurId'=>$electeurId, 'sessionId'=>$sessionId]);
+          
         }
 
         return $this->render('electeur/index.html.twig', [

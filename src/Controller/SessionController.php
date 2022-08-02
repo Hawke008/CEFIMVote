@@ -3,15 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Candidats;
-use App\Entity\Electeurs;
 use App\Entity\Sessions;
-use App\Entity\Votes;
 use App\Form\CreateSessionFormType;
 use App\Repository\CandidatsRepository;
 use App\Repository\ElecteursRepository;
 use App\Repository\SessionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,6 +25,9 @@ class SessionController extends AbstractController
         $this->client = $client;
     }
 
+    // affichageVotes(VotesRepository $votesRepository, CandidatsRepository $candidats, $admin=)
+
+
     #[Route('/session/dashboard/{id}', name: 'session_dashboard', methods: ['GET','POST'])]
     public function showDashboard(
         EntityManagerInterface $entityManager, 
@@ -41,17 +41,18 @@ class SessionController extends AbstractController
         $electeurSession=$electeurs->findBy(["session"=>$id]);
         $candidats=$candidats->findBy(["session"=>$id]);
         $sessionInfos = $session->find($id);
-   
+  
         $state= $sessionInfos->getState();
         
         if ($request->isMethod('post')) {
-            
-            $resultat=$request->request->get('resultat');
-            $binome=$request->request->get('binome');
-            
-            if ($binome){
+            // $resultat=$request->request->get('resultat');
+         
+            $state=$request->request->get("state");
 
-                $binome=json_decode($binome);
+            if($state==1){
+
+                $binomePost=$request->request->get('binome');
+                $binome=json_decode($binomePost);
 
                 foreach($binome as $key=>$value){
                     $candidats=new Candidats();
@@ -62,24 +63,28 @@ class SessionController extends AbstractController
                         $entityManager->persist($candidats);
                         $entityManager->flush();
                     }
-                    $this->updateState($entityManager,$sessionInfos->getId(),1);
+                    $this->updateState($entityManager,$sessionInfos->getId(),$state);
                 }
             }
-            else if ($resultat){
+            if($state==2){
+                $this->updateState($entityManager,$sessionInfos->getId(),$state);
+
+            ;}
+            // else if ($resultat){
                 
-                $resultat=json_decode($resultat);
+            //     $resultat=json_decode($resultat);
                 
-                }
+            //     }
                 
         }
-        $this->fetchSubscribers($sessionInfos->getCodeSession());
+    
+        // $this->fetchSubscribers($sessionInfos->getCodeSession());
         return $this->render('session/index.html.twig', ['electeurs' => $electeurSession, 'session' => $sessionInfos, 'state'=>$state,'candidats'=>$candidats,]);
     }
 
     public function updateState(EntityManagerInterface $entityManager,int $id, int $state): Response
     {
-
-        $session = $entityManager->getRepository(Sessions::class)->find($id);;
+        $session = $entityManager->getRepository(Sessions::class)->find($id);
         $session->setState($state);
         $entityManager->persist($session);
         $entityManager->flush();

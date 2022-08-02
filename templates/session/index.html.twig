@@ -42,7 +42,17 @@
 		.highlight-text {
 			font-weight: 700
 		}
+.highlight-votes{
+	background-color:var(--logo-bg-color);
+	padding-right:5px;
+	padding-left:3px;
+	border: 1px solid var(--logo-bg-color) ;
+	border-radius:20px;
+	color:white;
+}
+
 	</style>
+	{{dump(state)}}
 	<div class="row ">
 		<div class="col-5 highlight-text">
 
@@ -90,7 +100,7 @@
 				</div>
 				<div class="col">
 					<ul>
-						{% for electeur in electeurs%}
+						{% for electeur in electeurs %}
 							<li>{{electeur.prenom}}
 								{{electeur.nom}}</li>
 						{% endfor %}
@@ -112,12 +122,20 @@
 			</div>
 			{{include('session/partials/_select_candidates.html.twig')}}
 		{% endif %}
-		{%if state==1%}
+		{% if state==1 or state==2%}
 			<div class="col-2 text-center highlight-text">
-				Résultats Tour n°1
+				Résultats
 			</div>
-			{{include('session/partials/_vote_results.html.twig')}}
-		</div>
-	{% endif %}
+				<div class="col text-start ">
+					<div class="col">
+					<p><strong>PREMIER TOUR</strong></p>
+						<p class="votes-total-number">Nombre de votants : <span class="highlight-votes">13 / {{electeurs|length}}</span></p>
+						{{include('session/partials/_vote_results.html.twig')}}
+					</div>
+				</div>
+			</div>
+		{% endif %}
+		
 
-{% endblock %}
+	{% endblock %}
+
