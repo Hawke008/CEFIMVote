@@ -79,6 +79,9 @@ class ElecteurController extends AbstractController
         ]);
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 38dd36d87055b5f3952197a08fb60004787822c3
     
 }

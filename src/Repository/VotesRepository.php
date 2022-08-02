@@ -48,6 +48,7 @@ class VotesRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult();
     }
+<<<<<<< HEAD
     public function findOneByElecteur($value): ?Votes
     {
         return $this->createQueryBuilder('v')
@@ -57,6 +58,8 @@ class VotesRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+=======
+>>>>>>> 38dd36d87055b5f3952197a08fb60004787822c3
 }
 
 // 'query_builder'  function (CandidatsRepository $candidats$repository) {
