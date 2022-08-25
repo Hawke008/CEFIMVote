@@ -47,7 +47,7 @@ class VotesController extends AbstractController
             $electeurVote = false ;
         }
         $electeur=$electeursRepository->find($electeurId);
-        $sessionId= 2;
+        $sessionId= $_GET['sessionId'];
 
         $session = $sessionsRepository->find($sessionId);
         $state=$sessionsRepository->findOneById($sessionId)->getState();
