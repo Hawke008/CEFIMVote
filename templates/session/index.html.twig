@@ -98,12 +98,23 @@
 				<div class="col">
 					Liste des votants
 				</div>
-				<div class="col">
-					<ul>
-						{% for electeur in electeurs %}
+				<div class="col" >
+					<ul id='connected-voters-container'>
+						{# {% for electeur in electeurs %}
 							<li>{{electeur.prenom}}
 								{{electeur.nom}}</li>
-						{% endfor %}
+						{% endfor %} #}
+						<script>
+		let connectedElecteurContainer=document.querySelector('#connected-voters-container')
+
+		const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
+		eventSource.onmessage = event => {
+			const connectedVoters=document.createElement('li');
+			connectedElecteurContainer.appendChild(connectedVoters);
+			connectedVoters.innerText = JSON.parse(event.data);
+			console.log(JSON.parse(event.data))
+		}
+					</script>
 					</ul>
 				</div>
 			</div>
@@ -138,13 +149,16 @@
 			</div>
 		{% endif %}
 	<script>
-		let nombreVotes = 0
-		const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
-		eventSource.onmessage = event => {
-			nombreVotes += 1;
-			document.querySelector(".first").innerText = nombreVotes;
-			console.log(JSON.parse(event.data))
-		}
+
+	// 	let nombreVotes = 0
+	// 	const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
+	// 	eventSource.onmessage = event => {
+	// 		nombreVotes += 1;
+	// 		document.querySelector(".first").innerText = nombreVotes;
+	// 		console.log(JSON.parse(event.data))
+	// 	}
+
+		
 	</script>
 
 	{% endblock %}

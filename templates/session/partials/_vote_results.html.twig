@@ -14,8 +14,8 @@
 }
 </style>
 
-<div>
-{{render(path('app_affichage_resultat_votes'))}}
+<div class="resultat-premier-tour" hidden>
+{{render(path('app_affichage_resultat_votes'))}} 
 </div>
 
 <div class="row mt-5 p-0 ">
@@ -29,13 +29,19 @@
 		<strong>SECOND TOUR</strong>
 	</p>
 	<p class="votes-total-number">Nombre de votants : <span class="highlight-votes">13 / {{electeurs|length}}</span></p>
-
+	
 	{{render(path('app_affichage_resultat_votes'))}}
+	
 </div>
 
 
 <script>
 let state=1;
+
+
+let affichageResultatPremierTour=document.querySelector('.resultat-premier-tour')
+let affichageResultatSecondTour=document.querySelector('.resultat-second-tour')
+
 
 const clotureVote = document.querySelector('.close-vote')
 let lancerSecondTour = clotureVote.cloneNode(true)
@@ -43,13 +49,7 @@ lancerSecondTour.value="Lancer le second tour"
 
 const buttonContainer=document.querySelector('.next-step-button-container')
 clotureVote?.addEventListener('click', function(){
-	buttonContainer.removeChild(clotureVote);
-	buttonContainer.appendChild(lancerSecondTour);
-})
-let affichageResultatSecondTour=document.querySelector('.resultat-second-tour')
-
-lancerSecondTour.addEventListener('click', function(){
-buttonContainer.removeChild(lancerSecondTour);
+	
 	const url = window.location.toString();
 
 	const request = new XMLHttpRequest();
@@ -71,9 +71,23 @@ buttonContainer.removeChild(lancerSecondTour);
 
 {if (state==2){
 
-	affichageResultatSecondTour.hidden=false;
+	affichageResultatPremierTour.hidden=false;
 	
 }}
+
+{if (state==3){
+	affichageResultatSecondTour.hidden=false;
+}}
+	
+	
+	buttonContainer.removeChild(clotureVote);
+	buttonContainer.appendChild(lancerSecondTour);
+})
+
+
+lancerSecondTour.addEventListener('click', function(){
+buttonContainer.removeChild(lancerSecondTour);
+	
 
 })
 

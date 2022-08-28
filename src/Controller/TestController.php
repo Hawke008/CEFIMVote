@@ -15,6 +15,7 @@ class TestController extends AbstractController
     #[Route('/publish/test', name: 'test_publish')]
     public function publish(HubInterface $hub): Response
     {
+        
         if(isset($_POST['data'])){
             $this->test +=1;
             $update = new Update(

@@ -19,41 +19,24 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SessionController extends AbstractController
 {
-
-    private $client;
-
     public function __construct(HttpClientInterface $client)
     {
         $this->client = $client;
     }
 
-    // affichageVotes(VotesRepository $votesRepository, CandidatsRepository $candidats, $admin=)
-
-
     #[Route('/session/dashboard/{id}', name: 'session_dashboard', methods: ['GET','POST'])]
     public function showDashboard(
-        EntityManagerInterface $entityManager, 
-        ElecteursRepository $electeurs, 
-        SessionsRepository $session, 
-        $id,
-        CandidatsRepository $candidats,
-        Request $request,
-        HubInterface $hub): Response
-
+        EntityManagerInterface $entityManager, ElecteursRepository $electeurs, SessionsRepository $session, $id, CandidatsRepository $candidats, Request $request, HubInterface $hub): Response
     {
         $electeurSession=$electeurs->findBy(["session"=>$id]);
         $candidats=$candidats->findBy(["session"=>$id]);
         $sessionInfos = $session->find($id);
-  
         $state= $sessionInfos->getState();
         
         if ($request->isMethod('post')) {
-            // $resultat=$request->request->get('resultat');
-         
             $state=$request->request->get("state");
-
+            
             if($state==1){
-
                 $binomePost=$request->request->get('binome');
                 $binome=json_decode($binomePost);
 
@@ -66,36 +49,29 @@ class SessionController extends AbstractController
                         $entityManager->persist($candidats);
                         $entityManager->flush();
                     }
-
                     $this->updateState($entityManager,$sessionInfos->getId(),$state,$hub);
                 }
             }
             if($state==2){
                 $this->updateState($entityManager,$sessionInfos->getId(),$state,$hub);
-
-
-            ;}
-            // else if ($resultat){
-                
-            //     $resultat=json_decode($resultat);
-                
-            //     }
-                
+            }
         }
-    
-        // $this->fetchSubscribers($sessionInfos->getCodeSession());
         return $this->render('session/index.html.twig', ['electeurs' => $electeurSession, 'session' => $sessionInfos, 'state'=>$state,'candidats'=>$candidats,]);
     }
 
     public function updateState(EntityManagerInterface $entityManager,int $id, int $state,HubInterface $hub): Response
     {
+
+        $session = $entityManager->getRepository(Sessions::class)->find($id);
+        $codeSession=$session->getCodeSession();
+        
         $update = new Update(
-            'test',
+            $codeSession,
             'done'
         );
         $hub->publish($update);
 
-        $session = $entityManager->getRepository(Sessions::class)->find($id);
+
         $session->setState($state);
         $entityManager->persist($session);
         $entityManager->flush();
@@ -104,8 +80,6 @@ class SessionController extends AbstractController
             'id' => $session->getId()
         ]);
     }
-
-
 
     public function generateRandomString($length = 8) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
