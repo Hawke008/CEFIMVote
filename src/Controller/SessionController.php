@@ -62,23 +62,25 @@ class SessionController extends AbstractController
     public function updateState(EntityManagerInterface $entityManager,int $id, int $state,HubInterface $hub): Response
     {
 
-        $session = $entityManager->getRepository(Sessions::class)->find($id);
-        $codeSession=$session->getCodeSession();
-        
-        $update = new Update(
-            $codeSession,
-            'done'
-        );
-        $hub->publish($update);
-
-
-        $session->setState($state);
-        $entityManager->persist($session);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('session_dashboard', [
-            'id' => $session->getId()
-        ]);
+        {
+            $session = $entityManager->getRepository(Sessions::class)->find($id);
+            $codeSession=$session->getCodeSession();
+            
+            $update = new Update(
+                $codeSession,
+                'done'
+            );
+            $hub->publish($update);
+    
+    
+            $session->setState($state);
+            $entityManager->persist($session);
+            $entityManager->flush();
+    
+            return $this->redirectToRoute('session_dashboard', [
+                'id' => $session->getId()
+            ]);
+        }
     }
 
     public function generateRandomString($length = 8) {

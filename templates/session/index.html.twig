@@ -111,7 +111,9 @@
 		eventSource.onmessage = event => {
 			const connectedVoters=document.createElement('li');
 			connectedElecteurContainer.appendChild(connectedVoters);
-			connectedVoters.innerText = JSON.parse(event.data);
+			const electeur=JSON.parse(event.data)
+
+			connectedVoters.innerText = electeur.prenom + ' ' + electeur.nom;
 			console.log(JSON.parse(event.data))
 		}
 					</script>

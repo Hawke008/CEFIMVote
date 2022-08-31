@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ElecteursRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ElecteursRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ElecteursRepository::class)]
 class Electeurs
@@ -15,9 +16,11 @@ class Electeurs
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[Groups(['electeurs'])]
     #[ORM\Column(type: 'string', length: 255)]
     private $nom;
-
+    
+    #[Groups(['electeurs'])]
     #[ORM\Column(type: 'string', length: 255)]
     private $prenom;
 
@@ -47,7 +50,7 @@ class Electeurs
     {
         return $this->id;
     }
-
+    
     public function getNom(): ?string
     {
         return $this->nom;

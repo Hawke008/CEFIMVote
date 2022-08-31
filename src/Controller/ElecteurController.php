@@ -3,13 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Electeurs;
+use Symfony\Component\Mercure\Update;
 use App\Repository\SessionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mercure\HubInterface;
 use App\Form\ElecteurIdentificationFormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ElecteurController extends AbstractController
 {
@@ -45,25 +48,36 @@ class ElecteurController extends AbstractController
     public function identification(
         Request $request, 
         SessionsRepository $sessionsRepository, 
-        EntityManagerInterface $entityManager): Response
+        EntityManagerInterface $entityManager,
+        HubInterface $hub,
+        SerializerInterface $serializer
+        ): Response
     {
+
+        
         $sessionNavigateur=$request->getSession();
         $codeSession=$sessionNavigateur->get('codeSession');
 
         $electeur = new Electeurs();
-        $form = $this->createForm(ElecteurIdentificationFormType::class);
+        $form = $this->createForm(ElecteurIdentificationFormType::class,$electeur);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            $formdata = $form->getData();
-            
-            $electeur->setNom($formdata->getNom());
-            $electeur->setPrenom($formdata->getPrenom());
-            $electeur->setSignature($formdata->getSignature());
+            $electeur = $form->getData();
+           
             $electeur->setSession($sessionsRepository->findOneByCode($codeSession));
+        
+            $electeurSerialized=$serializer->serialize($electeur, 'json', ['groups'=>['electeurs']]);
+
+            $update = new Update(
+                    'test',
+                    $electeurSerialized
+                );
+                $hub->publish($update);
+               
             $entityManager->persist($electeur);
             $entityManager->flush();
+            
             $electeurId=$electeur->getId();
             $sessionId=$electeur->getSession()->getId();
 

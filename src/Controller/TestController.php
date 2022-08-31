@@ -15,17 +15,19 @@ class TestController extends AbstractController
     #[Route('/publish/test', name: 'test_publish')]
     public function publish(HubInterface $hub): Response
     {
-        
+  
         if(isset($_POST['data'])){
+          
             $this->test +=1;
             $update = new Update(
-                'test',
+                'connexion',
                 json_encode($_POST['data'])
             );
             $hub->publish($update);
+           
         }
-
-        return new Response('published!');
+        return $this->render('debog.html.twig');
+        // return new Response('unpublished!');
     }
     
     #[Route('/test', name: 'test_index')]
