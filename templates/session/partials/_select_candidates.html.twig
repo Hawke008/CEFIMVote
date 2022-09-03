@@ -1,4 +1,4 @@
-<div class="col-5 p-0">
+<div class="col-5 p-0 select-candidats" hidden>
 	<form class="form-candidats">
 		<div class="liste-candidats-group">
 			<div class="row mb-4 liste-candidats">
@@ -31,9 +31,8 @@
 		<div class="row m-0 mt-5 p-0">
 			<div class="col-3"></div>
 			<div class="col-9 p-0">
-			<a class="start-vote" href={{path('session_dashboard',{'id':session.id} )}}>
-			dddddd
-				{# <input type="button" value="Commencer le premier tour"> #}
+			<a  class="start-vote" href={{path('session_dashboard',{'id':session.id} )}}>
+				<input type="button" value="Commencer le premier tour" class="start-vote-input">
 			</a>
 				{# <input type="button" class="start-vote" value="Commencer le premier tour"> #}
 			</div>
@@ -51,11 +50,10 @@ addCandidats?. addEventListener("click", function () {
 	const ajoutListeCandidats = listeCandidats.cloneNode(true)
 	listeCandidatsGroup.appendChild(ajoutListeCandidats)
 })
-	
+//Validation de la liste des candidats et lancement du premier tour	
 const sendCandidatesList = document.querySelector('.start-vote')
 const url = window.location.toString()
 sendCandidatesList ?. addEventListener('click', (event) => {
-	
 	const candidatesToBeElected = document.querySelectorAll(".candidats")
 	let binome = [];
 
@@ -71,7 +69,6 @@ sendCandidatesList ?. addEventListener('click', (event) => {
 	request.open('POST', url, true)
 	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
 	request.addEventListener('onreadystatechange', (event) => {
-
 		if (request.readyState === XMLHttpRequest.DONE) {
 			if (request.status === 200) {
 				const response = JSON.parse(request.response);
@@ -84,6 +81,5 @@ sendCandidatesList ?. addEventListener('click', (event) => {
 	let state=1
 	binome=JSON.stringify(binome)
 	request.send("binome=" + encodeURIComponent(binome) + "&"+"state=" + encodeURIComponent(state))
-	
 })
 </script>	

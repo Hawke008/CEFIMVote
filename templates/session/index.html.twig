@@ -30,6 +30,7 @@
 		.close-vote,
 		.add-candidats,
 		.start-vote,
+		.start-vote-input,
 		.select-candidates,
 		.register .login {
 			background-color: var(--dark-grey);
@@ -42,20 +43,19 @@
 		.highlight-text {
 			font-weight: 700
 		}
-.highlight-votes{
-	background-color:var(--logo-bg-color);
-	padding-right:5px;
-	padding-left:3px;
-	border: 1px solid var(--logo-bg-color) ;
-	border-radius:20px;
-	color:white;
-}
-
+		.highlight-votes {
+			background-color: var(--logo-bg-color);
+			padding-right: 5px;
+			padding-left: 3px;
+			border: 1px solid var(--logo-bg-color);
+			border-radius: 20px;
+			color: white;
+		}
 	</style>
 	{{dump(state)}}
+
 	<div class="row ">
 		<div class="col-5 highlight-text">
-
 			<div class="row">
 				<div class="col">
 					Promotion
@@ -98,69 +98,84 @@
 				<div class="col">
 					Liste des votants
 				</div>
-				<div class="col" >
+				<div class="col ">
 					<ul id='connected-voters-container'>
-						{# {% for electeur in electeurs %}
-							<li>{{electeur.prenom}}
-								{{electeur.nom}}</li>
-						{% endfor %} #}
-						<script>
-		let connectedElecteurContainer=document.querySelector('#connected-voters-container')
-
-		const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
-		eventSource.onmessage = event => {
-			const connectedVoters=document.createElement('li');
-			connectedElecteurContainer.appendChild(connectedVoters);
-			const electeur=JSON.parse(event.data)
-
-			connectedVoters.innerText = electeur.prenom + ' ' + electeur.nom;
-			console.log(JSON.parse(event.data))
-		}
-					</script>
+					<div id="reconnexion" hidden>
+						{% for electeur in electeurs %}
+						<li>{{electeur.prenom}}
+						{{electeur.nom}}</li>
+						{% endfor %}
+					</div>	
 					</ul>
 				</div>
 			</div>
-			{%if state==0%}
-				<div class="row">
-					<div class="col"></div>
-					<div class="col">
-						<input type="button" id="select-candidates" class="select-candidates" value="Sélectionner les candidats">
-					</div>
+			<div class="row">
+				<div class="col"></div>
+				<div class="col" id="select-candidat-container">
+					<input type="button" id="select-candidates" class="select-candidates" value="Sélectionner les candidats">
 				</div>
-			{% endif %}
-		</div>
-		{%if state==0%}
-			<div class="col-2 text-center highlight-text">
-				Candidats
 			</div>
-			{{include('session/partials/_select_candidates.html.twig')}}
-		{% endif %}
+		</div>
+
+		<div class="col-2 text-center highlight-text candidats-title" hidden>
+			Candidats
+		</div>
+		{{include('session/partials/_select_candidates.html.twig')}}
+		{# {% endif %} #}
 		{% if state==1 or state==2%}
 			<div class="col-2 text-center highlight-text">
 				Résultats
 			</div>
-				<div class="col text-start ">
-					<div class="col">
-					<p><strong>PREMIER TOUR</strong></p>
+			<div class="col text-start ">
+				<div class="col">
+					<p>
+						<strong>PREMIER TOUR</strong>
+					</p>
 
-						<p class="votes-total-number">Nombre de votants : <span class="highlight-votes first"></span><span class="highlight-votes">/{{electeurs|length}}</span></p>
+					<p class="votes-total-number">Nombre de votants :
+						<span class="highlight-votes first"></span>
+						<span class="highlight-votes">/{{electeurs|length}}</span>
+					</p>
 
-						{{include('session/partials/_vote_results.html.twig')}}
-					</div>
+					{{include('session/partials/_vote_results.html.twig')}}
 				</div>
 			</div>
-		{% endif %}
+		</div>
+	{% endif %}
+
+
 	<script>
 
-	// 	let nombreVotes = 0
-	// 	const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
-	// 	eventSource.onmessage = event => {
-	// 		nombreVotes += 1;
-	// 		document.querySelector(".first").innerText = nombreVotes;
-	// 		console.log(JSON.parse(event.data))
-	// 	}
+		// MERCURE : Affichage des électeurs connectés
+let connectedElecteurContainer = document.querySelector('#connected-voters-container')
+const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
+eventSource.onmessage = event => {
+const connectedVoters = document.createElement('li');
+connectedElecteurContainer.appendChild(connectedVoters);
+const electeur = JSON.parse(event.data)
 
-		
+connectedVoters.innerText = electeur.prenom + ' ' + electeur.nom;
+console.log(JSON.parse(event.data))
+}
+
+//Affichage de la liste des électeurs dans le cas ou l'on ferme le navigateur
+let reconnexion = document.querySelector("#reconnexion")
+window.onload=function(){
+	reconnexion.hidden=false;
+}
+
+// DISPARITION DU BOUTON Sélectionner les candidats : affichage du formulaire
+const lancerSelectionCandidats = document.querySelector("#select-candidates")
+lancerSelectionCandidats.addEventListener('click', function () {
+let containerBoutonSelectionCandidats = document.querySelector("#select-candidat-container")
+containerBoutonSelectionCandidats.removeChild(lancerSelectionCandidats);
+
+let candidatTitle=document.querySelector('.candidats-title')
+candidatTitle.hidden=false
+let selectCandidats=document.querySelector('.select-candidats')
+selectCandidats.hidden=false
+})
+
+
 	</script>
-
-	{% endblock %}
+{% endblock %}

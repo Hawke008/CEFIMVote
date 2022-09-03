@@ -67,11 +67,10 @@ class SessionController extends AbstractController
             $codeSession=$session->getCodeSession();
             
             $update = new Update(
-                $codeSession,
-                'done'
+                "canalElecteur",
+                'done'  
             );
             $hub->publish($update);
-    
     
             $session->setState($state);
             $entityManager->persist($session);
