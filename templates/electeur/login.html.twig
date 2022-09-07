@@ -5,63 +5,61 @@
 
 {% block body %}
 
-<style>
-	.register {
-	            background-color: var(--dark-grey);
-	            color: white;
-	            font-weight: 700;
-	            width: 250px;
-	            border: 1px solid var(--dark-grey);
-	        }
-	        .highlight-text {
-	            font-weight: 700
-	        }
-	        .form {
-	            margin-top: 3%;
-	        }
-	.code{
-	    margin-top: 10px;
-	    margin-bottom: 10px;
-	    width:75%
-	}
+	<style>
+		.register {
+			background-color: var(--dark-grey);
+			color: white;
+			font-weight: 700;
+			width: 250px;
+			border: 1px solid var(--dark-grey);
+		}
+		.highlight-text {
+			font-weight: 700
+		}
+		.form {
+			margin-top: 3%;
+		}
+		.code {
+			margin-top: 10px;
+			margin-bottom: 10px;
+			width: 75%
+		}
+	</style>
+	{% for message in app.flashes('error') %}
+		<p>{{ message }}</p>
+	{% endfor %}
+	<div class="d-flex justify-content-center">
+		<div class="w-25 form">
+			<h2 class="my-3 ms-0 highlight-text">Register</h2>
+			<form method="post">
+				<label for="code">Entrez le code de Session</label>
+				<input type="text" name="code" id="code-session" class="code">
+				<button type="submit" class="register" id="submit-code">Valider</button>
+			</form>
+		</div>
+	</div>
 
-
-    </style>
-    {% for message in app.flashes('error') %}
-        <p>{{ message }}</p>
-    {% endfor %}
-    <div class="d-flex justify-content-center">
-        <div class="w-25 form">
-            <h2 class="my-3 ms-0 highlight-text">Register</h2>
-            <form method="post">
-                <label for="code">Entrez le code de Session</label>
-                <input type="text" name="code" id="code-session" class="code">
-                <button type="submit" class="register" id="submit-code">Valider</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        const submitButton = document.querySelector('#submit-code')
-        const url = window.location.toString()
-        const codeSessionInput = document.querySelector('#code-session')
-        submitButton.addEventListener('click', (event) => {
-            let codeSession = codeSessionInput.value
-            const request = new XMLHttpRequest();
-            request.open('POST', url, true)
-            request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-            request.addEventListener('onreadystatechange', () => {
-                if (request.readyState === XMLHttpRequest.DONE) {
-                    if (request.status === 200) {
-                        const response = JSON.parse(request.response);
-                        console.log("ca marche");
-                    } else {
-                        console.error('ca marche pas !');
-                    }
-                }
-            });
-            codeSession = JSON.stringify(codeSession);
-            request.send("code=" + encodeURIComponent(codeSession))
-        })
-    </script>
+	<script>
+		const submitButton = document.querySelector('#submit-code')
+const url = window.location.toString()
+const codeSessionInput = document.querySelector('#code-session')
+submitButton.addEventListener('click', (event) => {
+let codeSession = codeSessionInput.value
+const request = new XMLHttpRequest();
+request.open('POST', url, true)
+request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+request.addEventListener('onreadystatechange', () => {
+if (request.readyState === XMLHttpRequest.DONE) {
+if (request.status === 200) {
+const response = JSON.parse(request.response);
+console.log("ca marche");
+} else {
+console.error('ca marche pas !');
+}
+}
+});
+codeSession = JSON.stringify(codeSession);
+request.send("code=" + encodeURIComponent(codeSession))
+})
+	</script>
 {% endblock %}

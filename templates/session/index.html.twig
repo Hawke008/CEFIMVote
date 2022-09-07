@@ -100,12 +100,12 @@
 				</div>
 				<div class="col ">
 					<ul id='connected-voters-container'>
-					<div id="reconnexion" hidden>
-						{% for electeur in electeurs %}
-						<li>{{electeur.prenom}}
-						{{electeur.nom}}</li>
-						{% endfor %}
-					</div>	
+						<div id="reconnexion" hidden>
+							{% for electeur in electeurs %}
+								<li>{{electeur.prenom}}
+									{{electeur.nom}}</li>
+							{% endfor %}
+						</div>
 					</ul>
 				</div>
 			</div>
@@ -158,24 +158,40 @@ connectedVoters.innerText = electeur.prenom + ' ' + electeur.nom;
 console.log(JSON.parse(event.data))
 }
 
-//Affichage de la liste des électeurs dans le cas ou l'on ferme le navigateur
+// Affichage de la liste des électeurs dans le cas ou l'on ferme le navigateur
 let reconnexion = document.querySelector("#reconnexion")
-window.onload=function(){
-	reconnexion.hidden=false;
+window.onload = function () {
+reconnexion.hidden = false;
 }
 
 // DISPARITION DU BOUTON Sélectionner les candidats : affichage du formulaire
 const lancerSelectionCandidats = document.querySelector("#select-candidates")
 lancerSelectionCandidats.addEventListener('click', function () {
+
 let containerBoutonSelectionCandidats = document.querySelector("#select-candidat-container")
 containerBoutonSelectionCandidats.removeChild(lancerSelectionCandidats);
 
-let candidatTitle=document.querySelector('.candidats-title')
-candidatTitle.hidden=false
-let selectCandidats=document.querySelector('.select-candidats')
-selectCandidats.hidden=false
+let candidatTitle = document.querySelector('.candidats-title')
+candidatTitle.hidden = false
+let selectCandidats = document.querySelector('.select-candidats')
+selectCandidats.hidden = false
+
+
+// const request = new XMLHttpRequest();
+// request.open('GET', 'http://localhost:8000/session/dashboard/4', true);
+// request.addEventListener("readystatechange", function () {
+// if (request.readyState === XMLHttpRequest.DONE) {
+// if (request.status === 200) {
+// const response = JSON.parse(request.responseText);
+// onSuccess(response);
+// } else {
+// alert("Erreur");
+// }
+// }
+// });
+// request.send();
 })
-
-
 	</script>
+
+
 {% endblock %}
