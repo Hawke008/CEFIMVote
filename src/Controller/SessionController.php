@@ -24,65 +24,70 @@ class SessionController extends AbstractController
         $this->client = $client;
     }
 
-    #[Route('/session/dashboard/{id}', name: 'session_dashboard', methods: ['GET','POST'])]
+    #[Route('/session/dashboard/{id}', name: 'session_dashboard', methods: ['GET', 'POST'])]
     public function showDashboard(
-        EntityManagerInterface $entityManager, ElecteursRepository $electeurs, SessionsRepository $session, $id, CandidatsRepository $candidats, Request $request, HubInterface $hub): Response
-    {
-        $electeurSession=$electeurs->findBy(["session"=>$id]);
-        $candidats=$candidats->findBy(["session"=>$id]);
+        EntityManagerInterface $entityManager,
+        ElecteursRepository $electeurs,
+        SessionsRepository $session,
+        $id,
+        CandidatsRepository $candidats,
+        Request $request,
+        HubInterface $hub
+    ): Response {
+        $electeurSession = $electeurs->findBy(["session" => $id]);
+        $candidats = $candidats->findBy(["session" => $id]);
         $sessionInfos = $session->find($id);
-        $state= $sessionInfos->getState();
-        
-        if ($request->isMethod('post')) {
-            $state=$request->request->get("state");
-            
-            if($state==1){
-                $binomePost=$request->request->get('binome');
-                $binome=json_decode($binomePost);
+        $state = $sessionInfos->getState();
 
-                foreach($binome as $key=>$value){
-                    $candidats=new Candidats();
-                    if(intval($key)%2==0){
+        if ($request->isMethod('post')) {
+            $state = $request->request->get("state");
+
+            if ($state == 1) {
+                $binomePost = $request->request->get('binome');
+                $binome = json_decode($binomePost);
+
+                foreach ($binome as $key => $value) {
+                    $candidats = new Candidats();
+                    if (intval($key) % 2 == 0) {
                         $candidats->setTitulaire($electeurs->find($value));
-                        $candidats->setSuppleant($electeurs->find($binome[$key+1]));
+                        $candidats->setSuppleant($electeurs->find($binome[$key + 1]));
                         $candidats->setSession($session->find($id));
                         $entityManager->persist($candidats);
                         $entityManager->flush();
                     }
-                    $this->updateState($entityManager,$sessionInfos->getId(),$state,$hub);
+                    $this->updateState($entityManager, $sessionInfos->getId(), $state, $hub);
                 }
             }
-            if($state==2){
-                $this->updateState($entityManager,$sessionInfos->getId(),$state,$hub);
+            if ($state == 2) {
+                $this->updateState($entityManager, $sessionInfos->getId(), $state, $hub);
             }
         }
-        return $this->render('session/index.html.twig', ['electeurs' => $electeurSession, 'session' => $sessionInfos, 'state'=>$state,'candidats'=>$candidats,]);
+        return $this->render('session/index.html.twig', ['electeurs' => $electeurSession, 'session' => $sessionInfos, 'state' => $state, 'candidats' => $candidats,]);
     }
 
-    public function updateState(EntityManagerInterface $entityManager,int $id, int $state,HubInterface $hub): Response
-    {
-
-        {
+    public function updateState(EntityManagerInterface $entityManager, int $id, int $state, HubInterface $hub): Response
+    { {
             $session = $entityManager->getRepository(Sessions::class)->find($id);
-            $codeSession=$session->getCodeSession();
-            
+            $codeSession = $session->getCodeSession();
+
             $update = new Update(
                 "canalElecteur",
-                'done'  
+                'done'
             );
             $hub->publish($update);
-    
+
             $session->setState($state);
             $entityManager->persist($session);
             $entityManager->flush();
-    
+
             return $this->redirectToRoute('session_dashboard', [
                 'id' => $session->getId()
             ]);
         }
     }
 
-    public function generateRandomString($length = 8) {
+    public function generateRandomString($length = 8)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
@@ -122,6 +127,4 @@ class SessionController extends AbstractController
             'createSessionForm' => $form->createView(),
         ]);
     }
-
-    
 }
