@@ -111,9 +111,11 @@
 			</div>
 			<div class="row">
 				<div class="col"></div>
-				<div class="col" id="select-candidat-container">
-					<input type="button" id="select-candidates" class="select-candidates" value="Sélectionner les candidats">
-				</div>
+				{% if state==0 %}
+					<div class="col" id="select-candidat-container">
+						<input type="button" id="select-candidates" class="select-candidates" value="Sélectionner les candidats">
+					</div>
+				{% endif %}
 			</div>
 		</div>
 
@@ -152,10 +154,13 @@ const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?t
 eventSource.onmessage = event => {
 const connectedVoters = document.createElement('li');
 connectedElecteurContainer.appendChild(connectedVoters);
+
 const electeur = JSON.parse(event.data)
 
 connectedVoters.innerText = electeur.prenom + ' ' + electeur.nom;
 console.log(JSON.parse(event.data))
+
+
 }
 
 // Affichage de la liste des électeurs dans le cas ou l'on ferme le navigateur

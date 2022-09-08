@@ -85,15 +85,6 @@ class SessionController extends AbstractController
             'id' => $session->getId()
         ]);
     }
-    // #[Route('/session/dashboard/{id}/select', name: 'session_select_candidates', methods: ['GET'])]
-    // public function selectCandidates(
-    //     SessionsRepository $session,
-    // ) {
-    //     return $this->redirectToRoute('session_dashboard', [
-    //         'id' => '4'
-    //     ]);
-    // }
-
 
     public function generateRandomString($length = 8)
     {
