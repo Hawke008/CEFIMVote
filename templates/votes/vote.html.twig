@@ -1,142 +1,152 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tour 1 | Vote Electeur{% endblock %}
+{% block title %}Tour 1 | Vote Electeur
+{% endblock %}
 
 {% block body %}
 
-<style>
-.register {
-   background-color: var(--dark-grey);
-   color:white;
-   font-weight:700;
-   width:250px;
-   border:1px solid var(--dark-grey);
-   margin-top:15px;
-}
-.highlight-text{
-	font-weight:700
-}
-.form-container{
-    margin-top:3%;
-}
-.liste-candidat-container{
-    margin-top: 8px;
-    margin-bottom:8px;
-}
-   
-.candidats-selection{
-margin-left:10px;
-}
-.form{
-    margin-top:30px;
-}
+	<style>
+		.register {
+			background-color: var(--dark-grey);
+			color: white;
+			font-weight: 700;
+			width: 250px;
+			border: 1px solid var(--dark-grey);
+			margin-top: 15px;
+		}
+		.highlight-text {
+			font-weight: 700
+		}
+		.form-container {
+			margin-top: 3%;
+		}
+		.liste-candidat-container {
+			margin-top: 8px;
+			margin-bottom: 8px;
+		}
 
-.loader {
-    position:absolute;
-    top:32%;
-    left:49%;
-    transform:translate(-50%, -50%);
-    width: 48px;
-    height: 48px;
-    border: 5px solid grey;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-   
-    }
+		.candidats-selection {
+			margin-left: 10px;
+		}
+		.form {
+			margin-top: 30px;
+		}
 
-    @keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-    } 
+		.loader {
+			position: absolute;
+			top: 32%;
+			left: 49%;
+			transform: translate(-50%, -50%);
+			width: 48px;
+			height: 48px;
+			border: 5px solid grey;
+			border-bottom-color: transparent;
+			border-radius: 50%;
+			display: inline-block;
+			box-sizing: border-box;
+			animation: rotation 1s linear infinite;
 
+		}
 
-</style>
+		@keyframes rotation {
+			0% {
+				transform: rotate(0deg);
+			}
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+	</style>
 
-    <div id="main-container" class="d-flex justify-content-center">
-    {% if state == 0 %}
-        <p class="mt-5" style="font-size:25px">Veuillez patienter</p> 
-        <div class="loader"></div>
-    {% else %}
-        <div id="form" class="w-50 form-container  ">
-            <h2 class="my-2 ms-0 highlight-text ">Election des représentants de promotion</h2>
-            <h5><strong>{% if state==1 %}Premier tour{% endif %}{% if state==2 %}Deuxième tour{% endif %}</strong>, vote de {{electeur.prenom}} {{electeur.nom}}</h5>
-            <form class="form">
-                {% for candidat in candidats%}
-                    <div class="liste-candidat-container">
-                        <input type="checkbox" class="selection-candidat" value={{candidat.id}}><span class= "candidats-selection">{{candidat.titulaire}} / {{candidat.suppleant}}</span></input>
-                    </div>
-                {% endfor %}
-            </form>
-            <div class='d-flex justify-content-end'>
-                <a id="link" href={{path('app_resultat_votes')}}><button type="submit" class="register">Valider</button></a>
-                {# <button type="submit" class="register">Valider</button> #}
-            </div>
-
-            <script>
-                //Envoi du vote
-                const submitVote=document.querySelector(".register")
-                submitVote.addEventListener('click', function(e){
-                    e.preventDefault();
-                    //Affichage du loader
-
-                    document.querySelector('#form').remove();
-                    let waitingMessage = document.createElement('p')
-                    waitingMessage.innerText = "Veuillez patienter";
-                    document.querySelector('#main-container').append(waitingMessage);
-                    
-                    //Récupération des candidats sélectionnés
-                    let resultatSelection=0;
-                    const selectionCandidat=document.querySelectorAll(".selection-candidat")
-
-                    for (let i = 0; i < selectionCandidat.length; i++) {
-                        if (selectionCandidat[i].checked) {
-                            resultatSelection = selectionCandidat[i].value
-                        }
-                    }
-                    //Envoi de la requête vers le back à la même URL
-                    const request = new XMLHttpRequest();
-                    request.open('POST', window.location.toString())
-                    request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-                    request.setRequestHeader('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOltdfX0.Oo0yg7y4yMa1vr_bziltxuTCqb8JVHKxp-f_FwwOim0')
-                    request.addEventListener('onreadystatechange', () => {
-                        if (request.readyState === XMLHttpRequest.DONE) {
-                            if (request.status === 200) {
-                                const response = JSON.parse(request.response);
-                                console.log("marche");
-                            } else {
-                                console.error('ne marche pas !');
-                            }
-                        }
-                    })
-                    let vote=JSON.stringify(resultatSelection);
-                    let message = JSON.stringify("ok")
-                    request.send("electeurId="+electeurId+"&sessionId=1topic=test&data="+message+"&vote="+vote);
-                })
-            </script>
-        </div>
-    {% endif %}
-
+	<div id="main-container" class="d-flex justify-content-center">
+		{% if state == 0 %}
+			<p class="mt-5" style="font-size:25px">Veuillez patienter</p>
+			<div class="loader"></div>
+		{% else %}
+			<div id="form" class="w-50 form-container  ">
+				<h2 class="my-2 ms-0 highlight-text ">Election des représentants de promotion</h2>
+				<h5>
+					<strong>
+						{% if state==1 %}Premier tour
+						{% endif %}
+						{% if state==2 %}Deuxième tour
+						{% endif %}
+					</strong>, vote de
+					{{electeur.prenom}}
+					{{electeur.nom}}</h5>
+				<form class="form">
+					{% for candidat in candidats%}
+						<div class="liste-candidat-container">
+							<input type="checkbox" class="selection-candidat" value={{candidat.id}}>
+								<span class="candidats-selection">{{candidat.titulaire}}
+									/
+									{{candidat.suppleant}}</span>
+							</input>
+						</div>
+					{% endfor %}
+				</form>
+				<div class='d-flex justify-content-end'>
+					<a id="link" href={{path('app_resultat_votes')}}>
+						<button type="submit" class="register-vote">Valider</button>
+					</a>
+					{# <button type="submit" class="register">Valider</button> #}
+				</div>
+			</div>
+		{% endif %}
+	</div>
+	
 <script>
-const sessionId="{{sessionId}}"
+
+// Envoi du vote
+const submitVote = document.querySelector(".register-vote")
+submitVote?.addEventListener('click', function (e) {
+	e.preventDefault();
+	// Affichage du loader
+	// document.querySelector('#form').remove();
+	let waitingMessage = document.createElement('p')
+	waitingMessage.innerText = "Veuillez patienter";
+	document.querySelector('#main-container').append(waitingMessage);
+
+	// Récupération des candidats sélectionnés
+	let resultatSelection = 0;
+	const selectionCandidat = document.querySelectorAll(".selection-candidat")
+
+	for (let i = 0; i < selectionCandidat.length; i++) {
+		if (selectionCandidat[i].checked) {
+		resultatSelection = selectionCandidat[i].value
+		}
+	}
+// Envoi de la requête vers le back à la même URL
+const request = new XMLHttpRequest();
+request.open('POST', window.location.toString())
+request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+// request.setRequestHeader('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOltdfX0.Oo0yg7y4yMa1vr_bziltxuTCqb8JVHKxp-f_FwwOim0')
+request.addEventListener('onreadystatechange', () => {
+	if (request.readyState === XMLHttpRequest.DONE) {
+		if (request.status === 200) {
+		const response = JSON.parse(request.response);
+		console.log("marche");
+		} else {
+		console.error('ne marche pas !');
+		}
+	}
+})
+let vote = JSON.stringify(resultatSelection);
+let message = JSON.stringify("ok")
+console.log(message);
+request.send("electeurId=" + electeurId + "&sessionId=1topic=test&data=" + message + "&vote=" + vote);
+})
+				
+//MERCURE : Affichage du résultat des votes
+const sessionId ="{{ sessionId }}"
 const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=canalElecteur");
 console.log(eventSource)
-const link = "{{path('app_resultat_votes')}}"
+const link = "{{ path('app_resultat_votes') }}"
 const electeurId = "{{ electeurId }}";
 
-eventSource.onmessage= event => {
-    location.reload()
-    }
-    
-
-
-	
+eventSource.onmessage = event => {
+	location.reload()
+}
 </script>
 
 {% endblock %}

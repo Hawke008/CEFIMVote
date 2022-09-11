@@ -40,23 +40,23 @@
 	</div>
 
 	<script>
-		const submitButton = document.querySelector('#submit-code')
+const submitButton = document.querySelector('#submit-code')
 const url = window.location.toString()
 const codeSessionInput = document.querySelector('#code-session')
 submitButton.addEventListener('click', (event) => {
-let codeSession = codeSessionInput.value
-const request = new XMLHttpRequest();
-request.open('POST', url, true)
-request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-request.addEventListener('onreadystatechange', () => {
-if (request.readyState === XMLHttpRequest.DONE) {
-if (request.status === 200) {
-const response = JSON.parse(request.response);
-console.log("ca marche");
-} else {
-console.error('ca marche pas !');
-}
-}
+	let codeSession = codeSessionInput.value
+	const request = new XMLHttpRequest();
+	request.open('POST', url, true)
+	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+	request.addEventListener('onreadystatechange', () => {
+	if (request.readyState === XMLHttpRequest.DONE) {
+		if (request.status === 200) {
+		const response = JSON.parse(request.response);
+		console.log("ca marche");
+		} else {
+		console.error('ca marche pas !');
+		}
+	}
 });
 codeSession = JSON.stringify(codeSession);
 request.send("code=" + encodeURIComponent(codeSession))

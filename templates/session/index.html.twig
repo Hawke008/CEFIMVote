@@ -122,8 +122,10 @@
 		<div class="col-2 text-center highlight-text candidats-title" hidden>
 			Candidats
 		</div>
+		<!-- Affichage du select pour désigner les candidats -->
 		{{include('session/partials/_select_candidates.html.twig')}}
-		{# {% endif %} #}
+
+		<!-- Affichage des résultats-->	
 		{% if state==1 or state==2%}
 			<div class="col-2 text-center highlight-text">
 				Résultats
@@ -135,10 +137,10 @@
 					</p>
 
 					<p class="votes-total-number">Nombre de votants :
-						<span class="highlight-votes first"></span>
-						<span class="highlight-votes">/{{electeurs|length}}</span>
+						<span class="highlight-votes votes-number"></span>
+						<span>/</span>
+						<span class="highlight-votes">{{electeurs|length}}</span>
 					</p>
-
 					{{include('session/partials/_vote_results.html.twig')}}
 				</div>
 			</div>
@@ -146,57 +148,89 @@
 	{% endif %}
 
 
-	<script>
+<script>
 
-		// MERCURE : Affichage des électeurs connectés
+
+
+
+// MERCURE : Affichage des électeurs connectés
 let connectedElecteurContainer = document.querySelector('#connected-voters-container')
+let votesNumber = document.querySelector('.votes-number')
+votesNumberValue = 0
+
+//Souscription à Mercure
 const eventSource = new EventSource("http://localhost:3000/.well-known/mercure?topic=test");
+console.log(eventSource)
 eventSource.onmessage = event => {
-const connectedVoters = document.createElement('li');
-connectedElecteurContainer.appendChild(connectedVoters);
+	const connectedVoters = document.createElement('li');
+	connectedElecteurContainer.appendChild(connectedVoters);
 
-const electeur = JSON.parse(event.data)
+	const electeur = JSON.parse(event.data)
+	// Affichage des Electeurs connectés
+	connectedVoters.innerText = electeur.prenom + ' ' + electeur.nom;
 
-connectedVoters.innerText = electeur.prenom + ' ' + electeur.nom;
-console.log(JSON.parse(event.data))
-
-
+	//Compteur votes
+	votesNumberValue += 1
+	votesNumber.textContent = votesNumberValue;
 }
 
 // Affichage de la liste des électeurs dans le cas ou l'on ferme le navigateur
-let reconnexion = document.querySelector("#reconnexion")
-window.onload = function () {
-reconnexion.hidden = false;
+	let reconnexion = document.querySelector("#reconnexion")
+	window.onload = function () {
+	reconnexion.hidden = false;
 }
 
 // DISPARITION DU BOUTON Sélectionner les candidats : affichage du formulaire
 const lancerSelectionCandidats = document.querySelector("#select-candidates")
-lancerSelectionCandidats.addEventListener('click', function () {
 
-let containerBoutonSelectionCandidats = document.querySelector("#select-candidat-container")
-containerBoutonSelectionCandidats.removeChild(lancerSelectionCandidats);
+lancerSelectionCandidats ?. addEventListener('click', function () {
+	let sessionId='{{session.id}}'
+	getElecteursData(sessionId)
+	//Disparition au click du bouton "Sélectionner les candidats"
+	let containerBoutonSelectionCandidats = document.querySelector("#select-candidat-container")
+	containerBoutonSelectionCandidats.removeChild(lancerSelectionCandidats);
+	//Apparition du Titre "Candidats", volet du milieu
+	let candidatTitle = document.querySelector('.candidats-title')
+	candidatTitle.hidden = false
+	//Apparition du select (partial "_select_candidats")
+	let selectCandidats = document.querySelector('.select-candidats')
+	selectCandidats.hidden = false
 
-let candidatTitle = document.querySelector('.candidats-title')
-candidatTitle.hidden = false
-let selectCandidats = document.querySelector('.select-candidats')
-selectCandidats.hidden = false
+	}
+)
 
 
-// const request = new XMLHttpRequest();
-// request.open('GET', 'http://localhost:8000/session/dashboard/4', true);
-// request.addEventListener("readystatechange", function () {
-// if (request.readyState === XMLHttpRequest.DONE) {
-// if (request.status === 200) {
-// const response = JSON.parse(request.responseText);
-// onSuccess(response);
-// } else {
-// alert("Erreur");
-// }
-// }
-// });
-// request.send();
-})
-	</script>
+function getElecteursData(sessionId){
+	let URL="http://127.0.0.1:8000/session/dashboard/candidats/"
+	const request = new XMLHttpRequest();
+	request.open("GET",URL + sessionId, true)
+	request.addEventListener("readystatechange", function(){
+		if (request.readyState === XMLHttpRequest.DONE) {
+			if (request.status === 200) {
+				const response = JSON.parse(request.response);
+				//Insertion des noms des électeurs dans le Select
+				let selectCandidatTitulaire=document.querySelector('.candidat-titulaire')
+				let selectCandidatSuppleant=document.querySelector('.candidat-suppleant')
+				for (let i=0;i<response.length;i++){
+					let optionTitulaire=document.createElement('option')
+					optionTitulaire.value=response[i]['id']
+					optionTitulaire.textContent=response[i]['prenom'] +" "+response[i]['nom'] 
+					let optionSuppleant=optionTitulaire.cloneNode(true);
+					selectCandidatTitulaire.appendChild(optionTitulaire)
+					selectCandidatSuppleant.appendChild(optionSuppleant)
+					} 
+				} else {
+					console.error('cela ne marche pas !');
+			}
+		}
+	});	
+	request.send();
+}
+
+
+
+
+</script>
 
 
 {% endblock %}

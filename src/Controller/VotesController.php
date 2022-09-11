@@ -31,7 +31,7 @@ class VotesController extends AbstractController
         HubInterface $hub
     ): Response {
 
-        $state=0;
+        $state = 0;
         $electeurId = '';
 
         if ($request->getMethod() === "GET") {
@@ -41,17 +41,9 @@ class VotesController extends AbstractController
         }
         if ($votesRepository->findOneByElecteur($electeurId)) {
             $electeurVote = true;
-        
         } else {
             $electeurVote = false;
         }
-
-        // if(is_object($votesRepository->findOneByElecteur($electeurId))){
-        //     $electeurVote = true;
-        // }
-        // else{
-        //     $electeurVote = false ;
-        // }
         $electeur = $electeursRepository->find($electeurId);
         $sessionId = $_GET['sessionId'];
 
@@ -79,6 +71,7 @@ class VotesController extends AbstractController
                 json_encode($_POST['data'])
             );
             $hub->publish($update);
+
             $votes = $request->request->get('vote');
             $votes = json_decode($votes);
             $vote = new Votes();
@@ -103,19 +96,20 @@ class VotesController extends AbstractController
     #[Route('/vote/resultatvotes', name: 'app_resultat_votes')]
     public function affichageVotes(VotesRepository $votesRepository, CandidatsRepository $candidats)
     {
-
         return $this->render('votes/resultat.html.twig');
     }
 
     #[Route('/vote/resultat', name: 'app_affichage_resultat_votes')]
     public function affichageResultatsVote(VotesRepository $votesRepository, CandidatsRepository $candidats)
     {
-
-        // $tour=$votesRepository->findBy(array('tour'=>'2'));
+        
+        $tour=$votesRepository->findBy(array('tour'=>'1'));
+        $candidats=$votesRepository->affichageResultats();
         // $candidats=$candidats->find($tour);
-        // dd($candidats);
+
+        dd($candidats);
         // $candidats=affichageCandidatsTest($tour, $session);
-        $candidats = $candidats->findAll();
+        // $candidats = $candidats->findAll();
         $resultatByCandidatBinome = [];
         foreach ($candidats as $candidat) {
             $candidatId = $candidat->getId();
@@ -132,12 +126,11 @@ class VotesController extends AbstractController
 
         foreach ($resultatforEachCandidat as $resultat) {
             if ($resultat < $totalVotes / 2) {
-                $conclusionVote = "Auncun candidat ne remporte la majorité";
+                $conclusionVote = "Aucun candidat ne remporte la majorité";
             } else {
                 $conclusionVote = "La majorité est atteinte";
             }
         }
-
 
         return $this->render('votes/partials/_affichage_resultats.html.twig', [
             'candidats' => $candidats,

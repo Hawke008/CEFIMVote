@@ -4,20 +4,14 @@
 			<div class="row mb-4 liste-candidats">
 				<div class="col">
 					<label for="titulaire">Titulaire</label>
-					<select type="select" class="candidats">
-						{% for electeur in electeurs%}
-							<option value="{{electeur.id}}">{{electeur.prenom}}
-								{{electeur.nom}}</option>
-						{% endfor %}
+					<select type="select" class="candidats candidat-titulaire">
+						
 					</select>
 				</div>
 				<div class="col">
 					<label for="suppleant">Suppléant</label>
-					<select type="select" class="candidats">
-						{% for electeur in electeurs%}
-							<option value="{{electeur.id}}">{{electeur.prenom}}
-								{{electeur.nom}}</option>
-						{% endfor %}
+					<select type="select" class="candidats candidat-suppleant">
+						
 					</select>
 				</div>
 			</div>
@@ -42,48 +36,52 @@
 
 <script>
 
-	// selection des candidats boutonS
+	// Sélection des candidats boutons
 const listeCandidats = document.querySelector(".liste-candidats")
 const listeCandidatsGroup = document.querySelector(".liste-candidats-group")
 const addCandidats = document.querySelector('.add-candidats')
+
 addCandidats ?. addEventListener("click", function () {
-const ajoutListeCandidats = listeCandidats.cloneNode(true)
-listeCandidatsGroup.appendChild(ajoutListeCandidats)
+	const ajoutListeCandidats = listeCandidats.cloneNode(true)
+	listeCandidatsGroup.appendChild(ajoutListeCandidats)
 })
+
 // Validation de la liste des candidats et lancement du premier tour
 const sendCandidatesList = document.querySelector('.start-vote')
 const url = window.location.toString()
 sendCandidatesList ?. addEventListener('click', (event) => {
-const candidatesToBeElected = document.querySelectorAll(".candidats")
+	const candidatesToBeElected = document.querySelectorAll(".candidats")
 
-let binome = [];
+	let binome = [];
 
-for (let i = 0; i < candidatesToBeElected.length; i++) {
-if (i % 2 === 0) {
-binome[i] = candidatesToBeElected[i].value
-console.log("1", binome[i])
-} else {
-binome[i] = candidatesToBeElected[i].value
-console.log("2", binome[i])
-}
-}
+	for (let i = 0; i < candidatesToBeElected.length; i++) {
+		if (i % 2 === 0) {
+			binome[i] = candidatesToBeElected[i].value
+			console.log("1", binome[i])
+		} else {
+			binome[i] = candidatesToBeElected[i].value
+			console.log("2", binome[i])
+		}
+	}
 
-const request = new XMLHttpRequest();
-request.open('POST', url, true)
-request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-request.addEventListener('onreadystatechange', (event) => {
-if (request.readyState === XMLHttpRequest.DONE) {
-if (request.status === 200) {
-const response = JSON.parse(request.response);
-document.location.href = event.target.href;
-} else {
-console.error('ca marche pas !');
-}
-}
-});
-let state = 1
-binome = JSON.stringify(binome)
+	const request = new XMLHttpRequest();
+	request.open('POST', url, true)
+	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+	request.addEventListener('onreadystatechange', (event) => {
+		if (request.readyState === XMLHttpRequest.DONE) {
+			if (request.status === 200) {
+				const response = JSON.parse(request.response);
+				document.location.href = event.target.href;
+			} else {
+				console.error('ca marche pas !');
+			}
+		}
+	});
+	let state = 1
+	binome = JSON.stringify(binome)
+	console.log(binome)
 
-request.send("binome=" + encodeURIComponent(binome) + "&" + "state=" + encodeURIComponent(state))
-})
+	request.send("binome=" + encodeURIComponent(binome) + "&" + "state=" + encodeURIComponent(state))
+	}
+)
 </script>

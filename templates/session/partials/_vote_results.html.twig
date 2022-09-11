@@ -1,97 +1,89 @@
 <style>
-.votes-binomes-container{
-	margin-bottom:25px;
-}
+	.votes-binomes-container {
+		margin-bottom: 25px;
+	}
 
-.liste{
-	list-style:none;
-}
+	.liste {
+		list-style: none;
+	}
 
-.results{
-	width:fit-content;
-	padding:0px 3px 0px 3px;
-	font-weight:700
-}
+	.results {
+		width: fit-content;
+		padding: 0 3px;
+		font-weight: 700
+	}
 </style>
 
 <div class="resultat-premier-tour" hidden>
-{{render(path('app_affichage_resultat_votes'))}} 
+	{{render(path('app_affichage_resultat_votes'))}}
 </div>
 
 <div class="row mt-5 p-0 ">
-		<div class="col next-step-button-container"><input type="button" class="close-vote" value="Clôturer le vote"></div>
-			<div class="col p-0"></div>
-		</div>
-</div>
+	<div class="col next-step-button-container"><input type="button" class="close-vote" value="Clôturer le vote"></div>
+	<div class="col p-0"></div>
+</div></div><div class="resultat-second-tour" hidden>
+<p>
+	<strong>SECOND TOUR</strong>
+</p>
+<p class="votes-total-number">Nombre de votants :
+	<span class="highlight-votes">13 /
+		{{electeurs|length}}</span>
+</p>
 
-<div class="resultat-second-tour" hidden>
-	<p>
-		<strong>SECOND TOUR</strong>
-	</p>
-	<p class="votes-total-number">Nombre de votants : <span class="highlight-votes">13 / {{electeurs|length}}</span></p>
-	
-	{{render(path('app_affichage_resultat_votes'))}}
-	
-</div>
-
-
-<script>
-let state=1;
+{{render(path('app_affichage_resultat_votes'))}}</div><script>
+let state = 1;
 
 
-let affichageResultatPremierTour=document.querySelector('.resultat-premier-tour')
-let affichageResultatSecondTour=document.querySelector('.resultat-second-tour')
-
+affichageResultatPremierTour = document.querySelector('.resultat-premier-tour')
+let affichageResultatSecondTour = document.querySelector('.resultat-second-tour')
 
 const clotureVote = document.querySelector('.close-vote')
 let lancerSecondTour = clotureVote.cloneNode(true)
-lancerSecondTour.value="Lancer le second tour"
+lancerSecondTour.value = "Lancer le second tour"
 
-const buttonContainer=document.querySelector('.next-step-button-container')
-clotureVote?.addEventListener('click', function(){
-	
-	const url = window.location.toString();
+const buttonContainer = document.querySelector('.next-step-button-container')
+clotureVote ?. addEventListener('click', function () {
+votesNumber.textContent = 9
 
-	const request = new XMLHttpRequest();
+// let electeurs = {{ 'electeurs' }}
+// console.log(electeurs)
 
-	request.open('post', url, true)
-	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-	request.addEventListener('onreadystatechange', () => {
-		if (request.readyState === XMLHttpRequest.DONE) {
-			if (request.status === 200) {
-				const response = JSON.parse(request.response);
-				console.log("ca marche");
-			} else {
-				console.error('ca marche pas !');
-			}
-		}
-	});	
-	let state=2
-	request.send("state=" + encodeURIComponent(state))
+const url = window.location.toString();
+const request = new XMLHttpRequest();
 
-{if (state==2){
+request.open('post', url, true)
+request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+request.addEventListener('onreadystatechange', () => {
+if (request.readyState === XMLHttpRequest.DONE) {
+if (request.status === 200) {
+const response = JSON.parse(request.response);
+console.log("ca marche");
+} else {
+console.error('ca marche pas !');
+}
+}
+});
+let state = 2
+request.send("state=" + encodeURIComponent(state))
 
-	affichageResultatPremierTour.hidden=false;
-	
-}}
+if (state == 2) {
 
-{if (state==3){
-	affichageResultatSecondTour.hidden=false;
-}}
-	
-	
-	buttonContainer.removeChild(clotureVote);
-	buttonContainer.appendChild(lancerSecondTour);
+affichageResultatPremierTour.hidden = false;
+
+}
+
+if (state == 3) {
+affichageResultatSecondTour.hidden = false;
+}
+
+
+buttonContainer.removeChild(clotureVote);
+buttonContainer.appendChild(lancerSecondTour);
 })
 
 
-lancerSecondTour.addEventListener('click', function(){
+lancerSecondTour.addEventListener('click', function () {
 buttonContainer.removeChild(lancerSecondTour);
-	
-
-})
-
-	
 
 
-</script>
+})</script>

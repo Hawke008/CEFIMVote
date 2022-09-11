@@ -14,6 +14,7 @@ class Electeurs
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['electeurs'])]
     private $id;
 
     #[Groups(['electeurs'])]
